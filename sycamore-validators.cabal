@@ -1,0 +1,26 @@
+Cabal-Version:      2.4
+Name:               sycamore-validators 
+Version:            0.1.0.0
+Author:             Kelly Muhindi 
+Maintainer:          kmuhindi@proton.me
+Build-Type:          Simple
+Copyright:           © 2022 African Blockchain Center
+License:             Apache-2.0
+License-files:       LICENSE
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Week01.EnglishAuction, Sycamore.AccessControl
+  build-depends:       aeson
+                     , base ^>=4.14.1.0
+                     , containers
+                     , data-default
+                     , playground-common
+                     , plutus-contract
+                     , plutus-ledger
+                     , plutus-ledger-constraints
+                     , plutus-tx-plugin
+                     , plutus-tx
+                     , text
+  default-language:    Haskell2010
+  ghc-options:         -Wall -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas -fno-strictness -fno-spec-constr -fno-specialise
