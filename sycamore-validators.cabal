@@ -10,7 +10,7 @@ License-files:       LICENSE
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Sycamore.AccessControl
+  exposed-modules:     Sycamore.Basic, Sycamore.AccessControl
   build-depends:       aeson
                      , base ^>=4.14.1.0
                      , containers
