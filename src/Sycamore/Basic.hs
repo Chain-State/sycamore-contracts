@@ -45,8 +45,9 @@ import           Text.Printf          (printf)
 {-# INLINABLE mkValidator #-}
 --this function will be supplied to `mkValidator` which will compile it into Plutus Core to lockToContract a Validator.
 mkValidator :: BuiltinData -> BuiltinData -> BuiltinData -> ()
-mkValidator _ _ _ = ()
-
+mkValidator _ r _
+    | r == BuiltIns.mkI 42 = ()
+    | otherwise            = traceError "Wrong Redeeemer"
 
 --The `$$` will take the syntax tree and splice it into this part of the Haskell code.
 --The oxford brackets `||` convert the compiled Plutus Core code into a syntax tree.
@@ -65,7 +66,7 @@ scrAddress = scriptAddress validator
 --Define endpoints (Functions that will allow users to enter data and trigger actions on the validators)
 
 type BasicSchema = Endpoint "lockToContract" Integer
-            .\/    Endpoint "unlockFromContract" ()
+            .\/    Endpoint "unlockFromContract" Integer 
 
 lockToContract :: AsContractError e => Integer -> Contract w s e ()
 lockToContract amount = do
@@ -75,14 +76,14 @@ lockToContract amount = do
     logInfo @String $ printf "Sent %d Ada to contract" amount
 
 
-unlockFromContract :: forall w s e. AsContractError e => Contract w s e ()
-unlockFromContract = do
+unlockFromContract :: forall w s e. AsContractError e => Integer -> Contract w s e ()
+unlockFromContract n = do
     utxos <- utxosAt scrAddress
     let orefs = fst <$> Map.toList utxos 
         lookups = Constraints.unspentOutputs utxos <>
                   Constraints.otherScript validator
         tx :: Constraints.TxConstraints Void Void
-        tx = mconcat [mustSpendScriptOutput oref $ Redeemer $ BuiltIns.mkI 17 | oref <- orefs]
+        tx = mconcat [mustSpendScriptOutput oref $ Redeemer $ BuiltIns.mkI n | oref <- orefs]
     ledgerTx <- submitTxConstraintsWith @Void lookups tx
     void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
     logInfo @String $ "Ada amount collected"
@@ -91,7 +92,7 @@ endpoints :: Contract () BasicSchema Text ()
 endpoints = awaitPromise (lockToContract' `select` unlockFromContract') >> endpoints
   where 
     lockToContract' = endpoint @"lockToContract" lockToContract
-    unlockFromContract' = endpoint @"unlockFromContract" $ const unlockFromContract
+    unlockFromContract' = endpoint @"unlockFromContract" unlockFromContract
 
 mkSchemaDefinitions ''BasicSchema
 
