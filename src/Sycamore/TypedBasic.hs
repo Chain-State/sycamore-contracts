@@ -34,32 +34,38 @@ import           Playground.Contract  (IO, ensureKnownCurrencies, printSchemas, 
 import           Playground.TH        (mkKnownCurrencies, mkSchemaDefinitions)
 import           Playground.Types     (KnownCurrency (..))
 import           Plutus.Contract      
+import qualified PlutusTx             (Data (..))
 import qualified PlutusTx
 import qualified PlutusTx.Builtins    as BuiltIns
 import           PlutusTx.Prelude     hiding (Semigroup(..),unless)
 import           Schema               (ToSchema)
 import           Text.Printf          (printf)
 
+newtype DataAccessRedeemer = DataAccessRedeemer Integer deriving newtype (PlutusTx.toData)
+
+--make above custom data type into an instance of `IsData` (so that can be used in validators by to & from BuildInData)
+-- Uses template Haskell for making the instance.('' on the type makes it the parameter).
+PlutusTx.unstableMakeIsData ''DataAccessRedeemer
+
 --this pragma allows the compiler to inline the definition of `mkValidator` inside the `||` brackets
 --Any function that is to be used for on-chain code will need this validator.
 {-# INLINABLE mkValidator #-}
 --this function will be supplied to `mkValidator` which will compile it into Plutus Core to lockToContract a Validator.
-mkValidator :: () -> Integer -> ScriptContext -> Bool 
-mkValidator _ r _ = traceIfFalse "Wrong Redeemer" (r == 42)
-
+mkValidator :: () -> DataAccessRedeemer -> ScriptContext -> Bool 
+mkValidator _ (DataAccessRedeemer r) _ = traceIfFalse "Wrong Redeemer" (r == 42)
 
 --wtih typed data more boiler-plate code is required
 data Typed
 instance Scripts.ValidatorTypes Typed where
     type instance DatumType Typed = ()
-    type instance RedeemerType Typed = Integer
+    type instance RedeemerType Typed = DataAccessRedeemer 
 
 typedValidator :: Scripts.TypedValidator Typed
 typedValidator = Scripts.mkTypedValidator @Typed
     $$(PlutusTx.compile [|| mkValidator ||])
     $$(PlutusTx.compile [|| wrap ||])
   where
-    wrap = Scripts.wrapValidator @() @Integer
+    wrap = Scripts.wrapValidator @() @DataAccessRedeemer
 
 validator :: Validator
 validator = Scripts.validatorScript typedValidator
@@ -87,13 +93,13 @@ lockToContract amount = do
 
 
 unlockFromContract :: forall w s e. AsContractError e => Integer -> Contract w s e ()
-unlockFromContract n = do
+unlockFromContract r = do
     utxos <- utxosAt scrAddress
     let orefs = fst <$> Map.toList utxos 
         lookups = Constraints.unspentOutputs utxos <>
                   Constraints.otherScript validator
         tx :: Constraints.TxConstraints Void Void
-        tx = mconcat [mustSpendScriptOutput oref $ Redeemer $ BuiltIns.mkI n | oref <- orefs]
+        tx = mconcat [mustSpendScriptOutput oref $ Redeemer $ PlutusTx.toData (DataAccessRedeemer r) | oref <- orefs]
     ledgerTx <- submitTxConstraintsWith @Void lookups tx
     void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
     logInfo @String $ "Ada amount collected"
