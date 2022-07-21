@@ -80,8 +80,8 @@ type BasicSchema = Endpoint "lockToContract" Integer
 
 lockToContract :: AsContractError e => Integer -> Contract w s e ()
 lockToContract amount = do
-    let tx = mustPayToOtherScript valHash (Datum $ BuiltIns.mkI 0) $ Ada.lovelaceValueOf amount
-    ledgerTx <- submitTx tx
+    let tx = mustPayToTheScript () $ Ada.lovelaceValueOf amount
+    ledgerTx <- submitTxConstraints  typedValidator tx
     void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
     logInfo @String $ printf "Sent %d Ada to contract" amount
 
