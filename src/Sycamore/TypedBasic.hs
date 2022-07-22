@@ -18,30 +18,26 @@
 module Sycamore.TypedBasic where 
 
 import           Control.Monad        hiding (fmap)
-import           Data.Aeson           (ToJSON, FromJSON)
 import           Data.List.NonEmpty   (NonEmpty (..))
 import           Data.Map             as Map
 import           Data.Text            (pack, Text)
 import           Data.Void 
-import           GHC.Generics         (Generic)
 import           Prelude              (IO, Semigroup (..), String, undefined) 
 import           Ledger               hiding (singleton)
 import           Ledger.Constraints   as Constraints
 import qualified Ledger.Typed.Scripts as    Scripts
-import           Ledger.Value         as Value
 import           Ledger.Ada           as Ada
 import           Playground.Contract  (IO, ensureKnownCurrencies, printSchemas, stage, printJson)
 import           Playground.TH        (mkKnownCurrencies, mkSchemaDefinitions)
 import           Playground.Types     (KnownCurrency (..))
 import           Plutus.Contract      
-import qualified PlutusTx             (Data (..))
+import           PlutusTx             (Data (..))
 import qualified PlutusTx
-import qualified PlutusTx.Builtins    as BuiltIns
 import           PlutusTx.Prelude     hiding (Semigroup(..),unless)
 import           Schema               (ToSchema)
 import           Text.Printf          (printf)
 
-newtype DataAccessRedeemer = DataAccessRedeemer Integer deriving newtype (PlutusTx.toData)
+newtype DataAccessRedeemer = DataAccessRedeemer Integer
 
 --make above custom data type into an instance of `IsData` (so that can be used in validators by to & from BuildInData)
 -- Uses template Haskell for making the instance.('' on the type makes it the parameter).
@@ -52,7 +48,7 @@ PlutusTx.unstableMakeIsData ''DataAccessRedeemer
 {-# INLINABLE mkValidator #-}
 --this function will be supplied to `mkValidator` which will compile it into Plutus Core to lockToContract a Validator.
 mkValidator :: () -> DataAccessRedeemer -> ScriptContext -> Bool 
-mkValidator _ (DataAccessRedeemer r) _ = traceIfFalse "Wrong Redeemer" (r == 42)
+mkValidator _ (DataAccessRedeemer r) _ = traceIfFalse "Wrong Redeemer" $ r == 42
 
 --wtih typed data more boiler-plate code is required
 data Typed
@@ -99,7 +95,7 @@ unlockFromContract r = do
         lookups = Constraints.unspentOutputs utxos <>
                   Constraints.otherScript validator
         tx :: Constraints.TxConstraints Void Void
-        tx = mconcat [mustSpendScriptOutput oref $ Redeemer $ PlutusTx.toData (DataAccessRedeemer r) | oref <- orefs]
+        tx = mconcat [mustSpendScriptOutput oref $ Redeemer $ PlutusTx.toBuiltinData (DataAccessRedeemer r) | oref <- orefs]
     ledgerTx <- submitTxConstraintsWith @Void lookups tx
     void $ awaitTxConfirmed $ getCardanoTxId ledgerTx
     logInfo @String $ "Ada amount collected"
