@@ -6,6 +6,7 @@ module Sycamore.Deploy
     , writeValidator
     , writeUnit
     , writeVestingValidator
+    , writeRedeemer
     ) where
 
 import           Cardano.Api
@@ -37,7 +38,7 @@ writeUnit :: IO ()
 writeUnit = writeJSON "testnet/unit.json" ()
 
 writeRedeemer :: IO () 
-writeRedeemer = writeJSON "testnet/redeemer.json" (42 :: Integer)
+writeRedeemer = writeJSON "testnet/redeemer.json" (DataAccessRedeemer 42)
 
 writeVestingValidator :: IO (Either (FileError ()) ())
-writeVestingValidator = writeValidator "testnet/basic.plutus" $ TypedBasic 
+writeVestingValidator = writeValidator "testnet/basic.plutus" validator
