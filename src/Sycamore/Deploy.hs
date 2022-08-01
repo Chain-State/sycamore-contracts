@@ -36,5 +36,8 @@ writeValidator file = writeFileTextEnvelope @(PlutusScript PlutusScriptV1) file 
 writeUnit :: IO ()
 writeUnit = writeJSON "testnet/unit.json" ()
 
+writeRedeemer :: IO () 
+writeRedeemer = writeJSON "testnet/redeemer.json" (42 :: Integer)
+
 writeVestingValidator :: IO (Either (FileError ()) ())
 writeVestingValidator = writeValidator "testnet/basic.plutus" $ TypedBasic 
