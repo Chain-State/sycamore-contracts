@@ -51,3 +51,13 @@ executable token-policy
   ghc-options:         -Wall
   build-depends:       base ^>= 4.14.1.0
                      , sycamore-validators
+
+
+executable token-name-hex 
+  main-is: TokenNameHex.hs
+  hs-source-dirs:      app
+  ghc-options:         -Wall
+  build-depends:       base ^>= 4.14.1.0
+                     , sycamore-validators
+
+
