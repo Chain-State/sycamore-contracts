@@ -1,4 +1,4 @@
 cradle:
   cabal:
     - path: "./src"
-      component: "lib:plutus-pioneer-program-week01"
+      component: "lib:sycamore-validators"
