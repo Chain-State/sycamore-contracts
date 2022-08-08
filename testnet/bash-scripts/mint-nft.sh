@@ -6,8 +6,6 @@ tokenName=$3
 addrFile=$4
 skeyFile=$5
 
-export CARDANO_NODE_SOCKET_PATH=node.socket
-
 rootDir=../nft-mint
 echo "oref: $oref"
 echo "amt: $amt"
