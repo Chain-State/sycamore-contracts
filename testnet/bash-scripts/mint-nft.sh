@@ -14,7 +14,7 @@ echo "address file: $addrFile"
 echo "signing key file: $skeyFile"
 
 protocolParams=$rootDir/protocol-parameters.json
-cardano-cli query protocol-parameters --$TESTNET --out-file $protocolParams
+cardano-cli query protocol-parameters --$TS --out-file $protocolParams
 
 serializedPolicyScriptFile=$rootDir/token.plutus
 cabal exec token-policy $serializedPolicyScriptFile $oref $amt $tokenName
@@ -32,7 +32,7 @@ echo "minted value: $value"
 echo "address: $address"
 
 cardano-cli transaction build \
-    --$TESTNET \
+    --babbage-era \
     --tx-in $oref \
     --tx-in-collateral $oref \
     --tx-out "$address + 1500000 lovelace + $value" \
@@ -40,15 +40,18 @@ cardano-cli transaction build \
     --mint-script-file $serializedPolicyScriptFile \
     --mint-redeemer-file $rootDir/unit.json \
     --change-address $address \
-    --protocol-params-file $protocolParams\
-    --out-file $unsignedFile \
+    --protocol-params-file $protocolParams \
+    --out-file $unsignedFile  \
+    --$TS  
 
 cardano-cli transaction sign \
     --tx-body-file $unsignedFile \
     --signing-key-file $skeyFile \
-    --$TESTNET \
+    --$TS \
     --out-file $signedFile
 
 cardano-cli transaction submit \
-    --$TESTNET \
+    --$TS \
     --tx-file $signedFile
+
+#minted token: https://testnet.cardanoscan.io/token/6147c10abc7ff647ceeb52f5998ea4473d86249d872c3db25eabb2b5434e5374
