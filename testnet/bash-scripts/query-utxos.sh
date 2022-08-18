@@ -1,3 +1,3 @@
 #! /bin/bash
 
-cardano-cli query utxo --address $1 --$TESTNET
+cardano-cli query utxo --address $1 --$TS
