@@ -22,6 +22,10 @@ import           Ledger                      hiding (mint, singleton)
 import qualified Ledger.Typed.Scripts        as Scripts
 import           Ledger.Value                as Value
 
+--This policy script defines the constraints under which the tokens can be minted.
+--In this case:
+    -- the specified UTXO (oref) is part of the selected spending inputs for this tx
+    -- the minting info for previous mint operations matches the current inputs on   token name and amount.
 {-# INLINABLE mkTokenPolicy #-}
 mkTokenPolicy :: TxOutRef -> TokenName -> Integer -> () -> ScriptContext -> Bool
 mkTokenPolicy oref tn amt () ctx = traceIfFalse "UTxO not consumed"   hasUTxO           &&
