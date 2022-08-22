@@ -38,10 +38,11 @@ cardano-cli transaction build \
     --babbage-era \
     --tx-in $oref \
     --tx-in-collateral $oref \
-    --tx-out "$address + 660000000 lovelace + $value" \
+    --tx-out "$address + 100000000 lovelace + $value" \
     --mint "$value" \
     --mint-script-file $serializedPolicyScriptFile \
     --mint-redeemer-file $rootDir/unit.json \
+    --metadata-json-file $rootDir/metadata.json \
     --change-address $address \
     --protocol-params-file $protocolParams \
     --out-file $unsignedFile  \
@@ -58,3 +59,4 @@ cardano-cli transaction submit \
     --tx-file $signedFile
 
 #minted token (CSNt): https://testnet.cardanoscan.io/token/6147c10abc7ff647ceeb52f5998ea4473d86249d872c3db25eabb2b5434e5374
+#minted token (ARmds): 

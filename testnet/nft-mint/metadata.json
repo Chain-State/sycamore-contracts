@@ -1,0 +1,20 @@
+{
+"721": {
+    "19d7e252e3297d83059fdc4b1cbecb74728cc3794b2ac6ad8580862d": {
+      "6d656469536e6170": {
+        "name": "mediSnap",
+        "image": ["https://ipfs.io/ipfs/", "QmYyKtNv8G5bABNJTKDCmf99pke6QJC85bz3SjyE7jCB7u","?filename=medisnap_icon1.png"],
+        "mediaType": "image/png",
+        "description": ["MediSnap_#01 Dataset on 2000 patients", "with Tuberculosis diagnosis."],
+        "files": [
+          {
+            "name": "MediSnap01_DataSet_20220822151512",
+            "mediaType": "application/vnd.ms-excel",
+            "src": ["https://ipfs.io/ipfs/", "QmYyKtNv8G5bABNJTKDCmf99pke6QJC85bz3SjyE7jCB7u", "?filename=medisnap_icon1.png"]
+          }
+        ]
+      }
+    },
+    "version": "1.0"
+  }
+}
