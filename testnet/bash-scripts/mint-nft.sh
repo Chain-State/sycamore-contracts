@@ -57,6 +57,3 @@ cardano-cli transaction sign \
 cardano-cli transaction submit \
     --$TS \
     --tx-file $signedFile
-
-#minted token (CSNt): https://testnet.cardanoscan.io/token/6147c10abc7ff647ceeb52f5998ea4473d86249d872c3db25eabb2b5434e5374
-#minted token (ARmds): 
