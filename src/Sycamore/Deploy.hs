@@ -41,4 +41,4 @@ writeRedeemer :: IO ()
 writeRedeemer = writeJSON "testnet/redeemer.json" (DataAccessRedeemer 42)
 
 writeVestingValidator :: IO (Either (FileError ()) ())
-writeVestingValidator = writeValidator "testnet/basic.plutus" validator
+writeVestingValidator = writeValidator "testnet/basic-validator/basic.plutus" validator
