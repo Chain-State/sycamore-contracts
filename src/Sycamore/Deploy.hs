@@ -38,7 +38,7 @@ writeUnit :: IO ()
 writeUnit = writeJSON "testnet/unit.json" ()
 
 writeRedeemer :: IO () 
-writeRedeemer = writeJSON "testnet/redeemer.json" (DataAccessRedeemer 42)
+writeRedeemer = writeJSON "testnet/redeemer1.json" (DataAccessRedeemer 42)
 
 writeVestingValidator :: IO (Either (FileError ()) ())
 writeVestingValidator = writeValidator "testnet/basic-validator/basic.plutus" validator

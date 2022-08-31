@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#a UTXO at address2 mints NFT (FaberCastell#02) and sends to address1 
 oref=$1
 amt=$2
 tokenName=$3
@@ -38,12 +39,12 @@ cardano-cli transaction build \
     --babbage-era \
     --tx-in $oref \
     --tx-in-collateral $oref \
-    --tx-out "$address + 4000000000 lovelace + $value" \
+    --tx-out "$address 500000000 lovelace + $value" \
     --mint "$value" \
     --mint-script-file $serializedPolicyScriptFile \
     --mint-redeemer-file $rootDir/unit.json \
     --metadata-json-file $rootDir/metadata.json \
-    --change-address $address \
+    --change-address addr_test1vqxskgegtf0py3rxkjdux4st4dsk4mw6mtvnll9katfzsnqxrexsq \
     --protocol-params-file $protocolParams \
     --out-file $unsignedFile  \
     --$TS  
