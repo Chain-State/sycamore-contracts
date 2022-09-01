@@ -1,3 +1,4 @@
+#Use the build-raw tx builder in unlockTokenFromScript2.sh
 #address2 unlocks FaberCastell#02 NFT from script1
 cardano-cli transaction build \
     --babbage-era \
@@ -22,4 +23,7 @@ cardano-cli transaction sign \
 cardano-cli transaction submit \
     --$TS \
    --tx-file "../basic_validator/fbc_unlock.signed"
+
+
+   #DO NOT USE THIS FOR TESTING..USE THE BUILD RAW TX BUILDER
 
