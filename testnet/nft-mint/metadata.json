@@ -1,0 +1,23 @@
+{
+  "721": {
+    "588f43942516a04a48b02304bcaa38f1a072fd1dc2cd9af8a2afe71f": {
+      "FaberCastell#03": {
+        "name": "FaberCastell#03",
+        "image": ["https://ipfs.io/ipfs/","QmTGxReZszfzCMenQcFNqCoWpTUyLEKT878cT73AKTmJxK?","filename=ar.png"],
+        "mediaType": "image/png",
+        "description": "Final FaberCastell NFT",
+        "files": [
+          {
+            "name": "FaberCastell#03 Files",
+            "mediaType": "application/vnd.ms-excel",
+            "src": [
+              "https://ipfs.io/ipfs/",
+              "QmRommEDQQhzxZtTm2KxVcRMfHRQYQ6kWfP6pyxrHnmLvx"
+            ]
+          }
+        ]
+      }
+    },
+    "version": "1.0"
+  }
+}

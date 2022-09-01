@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#a UTXO at address2 mints NFT (FaberCastell#02) and sends to address1 
 oref=$1
 amt=$2
 tokenName=$3
@@ -17,7 +18,7 @@ protocolParams=$rootDir/protocol-parameters.json
 cardano-cli query protocol-parameters --$TS --out-file $protocolParams
 
 #create a serialised file from the script
-serializedPolicyScriptFile=$rootDir/token.plutus
+serializedPolicyScriptFile=$rootDir/nft-mint.plutus
 cabal exec token-policy $serializedPolicyScriptFile $oref $amt $tokenName
 
 unsignedFile=$rootDir/tx.unsigned
@@ -38,11 +39,12 @@ cardano-cli transaction build \
     --babbage-era \
     --tx-in $oref \
     --tx-in-collateral $oref \
-    --tx-out "$address + 660000000 lovelace + $value" \
+    --tx-out "$address 4000000000 lovelace + $value" \
     --mint "$value" \
     --mint-script-file $serializedPolicyScriptFile \
     --mint-redeemer-file $rootDir/unit.json \
-    --change-address $address \
+    --metadata-json-file $rootDir/metadata.json \
+    --change-address addr_test1vpafv4w9nxdx0fcun65aw3f66p8p0rmukd5tjwkkthtvcfcm853zl \
     --protocol-params-file $protocolParams \
     --out-file $unsignedFile  \
     --$TS  
@@ -56,5 +58,3 @@ cardano-cli transaction sign \
 cardano-cli transaction submit \
     --$TS \
     --tx-file $signedFile
-
-#minted token (CSNt): https://testnet.cardanoscan.io/token/6147c10abc7ff647ceeb52f5998ea4473d86249d872c3db25eabb2b5434e5374
