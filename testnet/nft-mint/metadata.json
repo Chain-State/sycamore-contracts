@@ -1,14 +1,14 @@
 {
   "721": {
-    "588f43942516a04a48b02304bcaa38f1a072fd1dc2cd9af8a2afe71f": {
-      "FaberCastell#03": {
-        "name": "FaberCastell#03",
-        "image": ["https://ipfs.io/ipfs/","QmTGxReZszfzCMenQcFNqCoWpTUyLEKT878cT73AKTmJxK?","filename=ar.png"],
+    "b05aa099ddad8fba28e520d00a7072d352119f5c194a8db484f41e75": {
+      "FaberCastell#05": {
+        "name": "FaberCastell#05",
+        "image": "https://ibb.co/hHyNsCx",
         "mediaType": "image/png",
         "description": "Final FaberCastell NFT",
         "files": [
           {
-            "name": "FaberCastell#03 Files",
+            "name": "FaberCastell#05 Files",
             "mediaType": "application/vnd.ms-excel",
             "src": [
               "https://ipfs.io/ipfs/",

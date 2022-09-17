@@ -372,6 +372,7 @@
     "poolPledgeInfluence": 0.3,
     "poolRetireMaxEpoch": 18,
     "protocolVersion": {
+        
         "major": 7,
         "minor": 0
     },
