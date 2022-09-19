@@ -34,18 +34,21 @@ import           PlutusTx.Prelude     hiding (Semigroup(..),unless)
 import           Schema               (ToSchema)
 import           Text.Printf          (printf)
 
-newtype DataAccessRedeemer = DataAccessRedeemer Integer
 
---make above custom data type into an instance of `IsData` (so that can be used in validators by to & from BuildInData)
--- Uses template Haskell for making the instance.('' on the type makes it the parameter).
-PlutusTx.unstableMakeIsData ''DataAccessRedeemer
+data AssetPurchaseDatum = AssetPurchaseDatum {
+
+    address1 :: Address
+   ,address2 :: Address
+}
+
+PlutusTx.makeIsDataIndexed ''AssetPurchaseDatum [('AssetPurchaseDatum, 0)]
 
 --this pragma allows the compiler to inline the definition of `mkValidator` inside the `||` brackets
 --Any function that is to be used for on-chain code will need this validator.
 {-# INLINABLE mkValidator #-}
 --this function will be supplied to `mkValidator` which will compile it into Plutus Core to lockToContract a Validator.
-mkValidator :: () -> DataAccessRedeemer -> ScriptContext -> Bool 
-mkValidator _ (DataAccessRedeemer r) _ = traceIfFalse "Wrong Redeemer" $ r == 42
+purchaseValidator :: () -> AssetPurchaseDatum -> ScriptContext -> Bool 
+purchaseValidator _ (DataAccessRedeemer r) _ = traceIfFalse "Wrong Redeemer" $ r == 42
 
 --wtih typed data more boiler-plate code is required
 data Typed
