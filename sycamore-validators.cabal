@@ -17,6 +17,7 @@ library
                      , Sycamore.Utils
                      , Sycamore.Nft.OnChain
                      , Sycamore.Nft.OffChain
+                     , Sycamore.Asset.AssetPurchase
   build-depends:       aeson
                      , base ^>=4.14.1.0
                      , bytestring
