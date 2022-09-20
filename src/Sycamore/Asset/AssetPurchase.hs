@@ -19,7 +19,7 @@ module Sycamore.Asset.AssetPurchase where
 
 import           Control.Monad        hiding (fmap)
 import           Data.List.NonEmpty   (NonEmpty (..))
-import           Data.Map             as Map
+import           Data.Map             as Map hiding (filter)
 import           Data.Text            (pack, Text)
 import           Data.Void 
 import           Data.Aeson             (ToJSON, FromJSON)
@@ -45,6 +45,8 @@ data AssetPurchaseDatum = AssetPurchaseDatum {
    ,buyer     :: Address
    ,beneficiary1   :: Address
    ,beneficiary2 :: Address
+   ,collateral :: AssetClass
+   ,collateralAmnt :: Integer
 } deriving (Show, Generic, FromJSON, ToJSON)
 
 PlutusTx.makeIsDataIndexed ''AssetPurchaseDatum [('AssetPurchaseDatum, 0)]
@@ -55,10 +57,25 @@ PlutusTx.makeIsDataIndexed ''AssetPurchaseDatum [('AssetPurchaseDatum, 0)]
 
 --this function will be supplied to `mkTypedValidator` which will compile it into Plutus Core.
 purchaseValidator :: AssetPurchaseDatum -> TokenName -> ScriptContext -> Bool 
-purchaseValidator  datum assetTn context  = validate 
+purchaseValidator  dat assetTn context  = validate 
     where
         validate ::  Bool
-        validate = True 
+        validate = txHasOneScInputOnly context
+                   && validateTxOuts 
+
+        txHasOneScInputOnly :: ScriptContext -> Bool
+        txHasOneScInputOnly context =
+          length (filter isJust $ toValidatorHash . txOutAddress . txInInfoResolved <$> txInfoInputs (scriptContextTxInfo context)) == 1
+
+        validateTxOuts :: Bool
+        validateTxOuts = any txOutValidate (txInfoOutputs (scriptContextTxInfo context))
+
+        txOutValidate :: TxOut -> Bool
+        txOutValidate txo = containsRequiredCollateralAmount txo
+
+        containsRequiredCollateralAmount :: TxOut -> Bool
+        containsRequiredCollateralAmount txo =
+          collateralAmnt dat <= assetClassValueOf (txOutValue txo) (collateral dat)
 
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
 --the information about the datum and redeemer that plutus core expects.
