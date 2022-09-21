@@ -43,7 +43,9 @@ import           Plutus.V1.Ledger.Value
 data AssetPurchaseDatum = AssetPurchaseDatum {
     saleNftTn :: TokenName
    ,buyer     :: Address
-   ,beneficiary1   :: Address
+   ,aggregator   :: Address
+   ,aggregatorCurrency :: AssetClass
+   ,aggregatorAmount :: Integer
    ,beneficiary2 :: Address
    ,collateral :: AssetClass
    ,collateralAmnt :: Integer
@@ -69,6 +71,10 @@ purchaseValidator  dat assetTn context  = validate
 
         validateTxOuts :: Bool
         validateTxOuts = any txOutValidate (txInfoOutputs (scriptContextTxInfo context))
+
+        aggregatorIsPaid :: Bool
+        aggregatorIsPaid = assetClassValueOf (valuePaidToAddress context (aggregator dat)) (aggregatorCurrency dat) == aggregatorAmount dat
+
 
         txOutValidate :: TxOut -> Bool
         txOutValidate txo = containsRequiredCollateralAmount txo
