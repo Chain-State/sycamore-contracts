@@ -63,8 +63,8 @@ purchaseValidator  dat assetTn context  = validate
         validate =    txHasOneScInputOnly 
                    && validateTxOuts 
 
-        txHasOneScInputOnly :: ScriptContext -> Bool
-        txHasOneScInputOnly context =
+        txHasOneScInputOnly :: Bool
+        txHasOneScInputOnly =
           length (filter isJust $ toValidatorHash . txOutAddress . txInInfoResolved <$> txInfoInputs (scriptContextTxInfo context)) == 1
 
         validateTxOuts :: Bool
@@ -77,8 +77,11 @@ purchaseValidator  dat assetTn context  = validate
         containsRequiredCollateralAmount txo =
           collateralAmnt dat <= assetClassValueOf (txOutValue txo) (collateral dat)
 
+        --from all the outputs in the tx, get the total being paid to the specified address
         valuePaidToAddress :: ScriptContext -> Address -> Value
-        valuePaidToAddress ctx addr = mconcat (fmap txOutValue (filter (\x -> txOutAddress x == addr) (txInfoOutputs (info ctx))))
+        valuePaidToAddress ctx addr = mconcat (fmap txOutValue (filter (\x -> txOutAddress x == addr) (txInfoOutputs (scriptContextTxInfo context))))
+
+
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
 --the information about the datum and redeemer that plutus core expects.
 data TypedValidator
