@@ -1,0 +1,23 @@
+{
+  "721": {
+    "b05aa099ddad8fba28e520d00a7072d352119f5c194a8db484f41e75": {
+      "FaberCastell#05": {
+        "name": "Afia #01",
+        "image": "https://ibb.co/hHyNsCx",
+        "mediaType": "image/png",
+        "description": "Afia NFT #01",
+        "files": [
+          {
+            "name": "Afia NFT Files",
+            "mediaType": "application/vnd.ms-excel",
+            "src": [
+              "https://ipfs.io/ipfs/",
+              "QmRommEDQQhzxZtTm2KxVcRMfHRQYQ6kWfP6pyxrHnmLvx"
+            ]
+          }
+        ]
+      }
+    },
+    "version": "1.0"
+  }
+}
