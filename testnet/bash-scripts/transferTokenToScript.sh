@@ -2,7 +2,7 @@
 cardano-cli transaction build-raw \
     --babbage-era \
     --tx-in 6ed67a796063eb7587b74516a861cb111ad8715d36e4a74e018e1d08f74fee5b#1  \
-    --tx-out-datum-hash-file "../afia-validation/lockTokenScriptHash.json" \
+    --tx-out-datum-hash-file "../afia-validation/datum.json" \
     --tx-out addr_test1wqk4mq6a52y92ys9ckyypx96lr37ddyypd3gwcf8l40t0zqvjxzwv+100000000+"1 bcf896fe5c1dbb10dcce8d2ec557492d407450c44e8bdbcdb9db7812.41666961233031" \
     --tx-out addr_test1vpafv4w9nxdx0fcun65aw3f66p8p0rmukd5tjwkkthtvcfcm853zl+1821651 \
     --out-file "../afia-valiadtion/scriptLock.raw" \

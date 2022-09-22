@@ -40,76 +40,79 @@ import           PlutusTx.Prelude     hiding (Semigroup(..),unless)
 import           Plutus.V1.Ledger.Value
 
 
-data AssetPurchaseDatum = AssetPurchaseDatum {
+data AssetPurchase = AssetPurchase {
     saleNftTn :: TokenName
-   ,buyer     :: Address
    ,aggregator   :: Address
    ,aggregatorCurrency :: AssetClass
    ,aggregatorAmount :: Integer
-   ,beneficiary2 :: Address
+   ,beneficiary :: Address
    ,collateral :: AssetClass
    ,collateralAmnt :: Integer
 } deriving (Show, Generic, FromJSON, ToJSON)
 
-PlutusTx.makeIsDataIndexed ''AssetPurchaseDatum [('AssetPurchaseDatum, 0)]
+
+PlutusTx.makeLift ''AssetPurchase
+-- PlutusTx.makeIsDataIndexed ''AssetPurchaseDatum [('AssetPurchaseDatum, 0)]
 
 --pragma {# INLINABLE func #}: allows the compiler to inline the definition of `purchaseValidator` inside the `||` brackets
 --Any function that is to be used for on-chain code will need this validator.
 {-# INLINABLE purchaseValidator #-}
 
 --this function will be supplied to `mkTypedValidator` which will compile it into Plutus Core.
-purchaseValidator :: AssetPurchaseDatum -> TokenName -> ScriptContext -> Bool 
-purchaseValidator  dat assetTn context  = validate 
+purchaseValidator :: AssetPurchase -> () -> () -> ScriptContext -> Bool 
+purchaseValidator arg () () ctx  = validate 
     where
         validate ::  Bool
-        validate =    txHasOneScInputOnly 
-                   && validateTxOuts 
+        validate =    txHasOneScInputOnly && validateTxOuts 
 
         txHasOneScInputOnly :: Bool
         txHasOneScInputOnly =
-          length (filter isJust $ toValidatorHash . txOutAddress . txInInfoResolved <$> txInfoInputs (scriptContextTxInfo context)) == 1
+          length (filter isJust $ toValidatorHash . txOutAddress . txInInfoResolved <$> txInfoInputs (scriptContextTxInfo ctx)) == 1
 
         validateTxOuts :: Bool
-        validateTxOuts = any txOutValidate (txInfoOutputs (scriptContextTxInfo context))
+        validateTxOuts = any txOutValidate (txInfoOutputs (scriptContextTxInfo ctx))
 
         aggregatorIsPaid :: Bool
-        aggregatorIsPaid = assetClassValueOf (valuePaidToAddress context (aggregator dat)) (aggregatorCurrency dat) == aggregatorAmount dat
-
+        aggregatorIsPaid = assetClassValueOf (valuePaidToAddress ctx (aggregator arg)) (aggregatorCurrency arg) == aggregatorAmount arg
 
         txOutValidate :: TxOut -> Bool
         txOutValidate txo = containsRequiredCollateralAmount txo
 
         containsRequiredCollateralAmount :: TxOut -> Bool
         containsRequiredCollateralAmount txo =
-          collateralAmnt dat <= assetClassValueOf (txOutValue txo) (collateral dat)
+          collateralAmnt arg <= assetClassValueOf (txOutValue txo) (collateral arg)
 
         --from all the outputs in the tx, get the total being paid to the specified address
         valuePaidToAddress :: ScriptContext -> Address -> Value
-        valuePaidToAddress ctx addr = mconcat (fmap txOutValue (filter (\x -> txOutAddress x == addr) (txInfoOutputs (scriptContextTxInfo context))))
+        valuePaidToAddress ctx addr = mconcat (fmap txOutValue (filter (\x -> txOutAddress x == addr) (txInfoOutputs (scriptContextTxInfo ctx))))
 
 
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
 --the information about the datum and redeemer that plutus core expects.
 data TypedValidator
 instance Scripts.ValidatorTypes TypedValidator where
-    type instance DatumType TypedValidator = AssetPurchaseDatum
-    type instance RedeemerType TypedValidator = TokenName 
+    type instance DatumType TypedValidator = ()
+    type instance RedeemerType TypedValidator = () 
 
-typedValidator :: Scripts.TypedValidator TypedValidator
-typedValidator = Scripts.mkTypedValidator @TypedValidator
-    $$(PlutusTx.compile [|| purchaseValidator ||])
+typedValidator :: AssetPurchase -> Scripts.TypedValidator TypedValidator
+typedValidator arg = Scripts.mkTypedValidator @TypedValidator
+    ($$(PlutusTx.compile [|| purchaseValidator ||]) `PlutusTx.applyCode` PlutusTx.liftCode arg)
     $$(PlutusTx.compile [|| wrap ||])
   where
-    wrap = Scripts.wrapValidator @AssetPurchaseDatum @TokenName
+    wrap = Scripts.wrapValidator @() @()
 
-validator :: Validator
-validator = Scripts.validatorScript typedValidator
+validator :: AssetPurchase -> Validator
+validator = Scripts.validatorScript . typedValidator
 
 --generate hash of the validator
-valHash :: Ledger.ValidatorHash
-valHash = Scripts.validatorHash typedValidator
+valHash :: AssetPurchase -> Ledger.ValidatorHash
+valHash = Scripts.validatorHash . typedValidator
 
 --generate address from the validator
-scrAddress :: Ledger.Address
-scrAddress = scriptAddress validator
+scrAddress :: AssetPurchase -> Ledger.Address
+scrAddress = scriptAddress . validator
+
+-- dat :: AssetPurchaseDatum 
+-- dat = AssetPurchaseDatum 
+--     TokenName (toBuiltin "bcf896fe5c1dbb10dcce8d2ec557492d407450c44e8bdbcdb9db7812.41666961233031")
 

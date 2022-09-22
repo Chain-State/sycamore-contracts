@@ -41,4 +41,13 @@ writeRedeemer :: IO ()
 writeRedeemer = writeJSON "testnet/afia-validation/redeemer.json" ()
 
 writeAssetPurchaseValidator :: IO (Either (FileError ()) ())
-writeAssetPurchaseValidator = writeValidator "testnet/afia-validation/ap.plutus" validator
+writeAssetPurchaseValidator = writeValidator "testnet/afia-validation/ap.plutus" $ validator $ AssetPurchase 
+                                {
+                                    saleNftTn = TokenName . Ledger.toBuiltin "token1"
+                                   ,aggregator = ""
+                                   ,aggregatorCurrency = ""
+                                   ,aggregatorAmount = 20000000
+                                   ,beneficiary = ""
+                                   ,collateral = AssetClass 
+                                   ,collateralAmnt = 2000000
+                                }
