@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeApplications  #-}
 
-module Sycamore.Asset.Deploy
+module Sycamore.Asset.DeployAssetPurchase
     ( writeJSON
     , writeValidator
     , writeAssetPurchaseValidator
@@ -38,7 +38,7 @@ writeUnit :: IO ()
 writeUnit = writeJSON "testnet/afia-validation/unit.json" ()
 
 writeRedeemer :: IO () 
-writeRedeemer = writeJSON "testnet/redeemer1.json" ()
+writeRedeemer = writeJSON "testnet/afia-validation/redeemer.json" ()
 
 writeAssetPurchaseValidator :: IO (Either (FileError ()) ())
-writeVestingValidator = writeValidator "testnet/afia-validation/ap.plutus" validator
+writeAssetPurchaseValidator = writeValidator "testnet/afia-validation/ap.plutus" validator
