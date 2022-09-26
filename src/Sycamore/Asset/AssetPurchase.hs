@@ -42,7 +42,7 @@ import           Plutus.V1.Ledger.Value
 
 data AssetPurchase = AssetPurchase {
     saleNftTn :: TokenName
-   ,aggregator   :: Address
+   ,aggregator   :: Address 
    ,aggregatorCurrency :: AssetClass
    ,aggregatorAmount :: Integer
    ,beneficiary :: Address
@@ -111,8 +111,3 @@ valHash = Scripts.validatorHash . typedValidator
 --generate address from the validator
 scrAddress :: AssetPurchase -> Ledger.Address
 scrAddress = scriptAddress . validator
-
--- dat :: AssetPurchaseDatum 
--- dat = AssetPurchaseDatum 
---     TokenName (toBuiltin "bcf896fe5c1dbb10dcce8d2ec557492d407450c44e8bdbcdb9db7812.41666961233031")
-
