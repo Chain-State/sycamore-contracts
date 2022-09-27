@@ -1,6 +1,0 @@
-Attribution
-=============
-Some PoC validators in this project use code developed by IOHK for the Plutus Pioneers Program. 
-In particular:
-    * Sycamore/NFTsMint.hs - https://github.com/input-output-hk/plutus-pioneer-program/blob/main/code/week05/src/Week05/NFT.hs
-    * 
