@@ -1,6 +1,6 @@
 {
   "721": {
-    "": {
+    "2276a24f522753b75e8cb19041313b12e56443cac8c96b7704391e10": {
       "Test NFT#01": {
         "name": "AF01",
         "image": "https://i.postimg.cc/sXYbvwhN/ar.png",
@@ -10,7 +10,7 @@
           {
             "name": "Data Files",
             "mediaType": "application/vnd.ms-excel",
-            "src": "https://easyupload.io/df93gc",
+            "src": "https://easyupload.io/df93gc"
         }]
       }
     },

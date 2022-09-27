@@ -60,33 +60,35 @@ PlutusTx.makeLift ''AssetPurchase
 
 --this function will be supplied to `mkTypedValidator` which will compile it into Plutus Core.
 purchaseValidator :: AssetPurchase -> () -> () -> ScriptContext -> Bool 
-purchaseValidator arg () () ctx  = validate 
+purchaseValidator p () () ctx  = validate 
     where
         validate ::  Bool
         validate =    txHasOneScInputOnly && validateTxOuts 
 
+--Only one input should exist pointing to a validator
         txHasOneScInputOnly :: Bool
         txHasOneScInputOnly =
           length (filter isJust $ toValidatorHash . txOutAddress . txInInfoResolved <$> txInfoInputs (scriptContextTxInfo ctx)) == 1
 
+--At least one output must contain a collateral amount of 2 Ada or less
         validateTxOuts :: Bool
         validateTxOuts = any txOutValidate (txInfoOutputs (scriptContextTxInfo ctx))
 
-        aggregatorIsPaid :: Bool
-        aggregatorIsPaid = assetClassValueOf (valuePaidToAddress ctx (aggregator arg)) (aggregatorCurrency arg) == aggregatorAmount arg
-
         txOutValidate :: TxOut -> Bool
         txOutValidate txo = containsRequiredCollateralAmount txo
-
+        
         containsRequiredCollateralAmount :: TxOut -> Bool
         containsRequiredCollateralAmount txo =
-          collateralAmnt arg <= assetClassValueOf (txOutValue txo) (collateral arg)
+          collateralAmnt p <= assetClassValueOf (txOutValue txo) (collateral p)
 
-        --from all the outputs in the tx, get the total being paid to the specified address
+--AR address must have 2 Ada deposited. (Not in use currently!)
+        aggregatorIsPaid :: Bool
+        aggregatorIsPaid = assetClassValueOf (valuePaidToAddress ctx (aggregator p)) (aggregatorCurrency p) == aggregatorAmount p
+
         valuePaidToAddress :: ScriptContext -> Address -> Value
         valuePaidToAddress ctx addr = mconcat (fmap txOutValue (filter (\x -> txOutAddress x == addr) (txInfoOutputs (scriptContextTxInfo ctx))))
 
-
+        
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
 --the information about the datum and redeemer that plutus core expects.
 data TypedValidator
@@ -95,8 +97,8 @@ instance Scripts.ValidatorTypes TypedValidator where
     type instance RedeemerType TypedValidator = () 
 
 typedValidator :: AssetPurchase -> Scripts.TypedValidator TypedValidator
-typedValidator arg = Scripts.mkTypedValidator @TypedValidator
-    ($$(PlutusTx.compile [|| purchaseValidator ||]) `PlutusTx.applyCode` PlutusTx.liftCode arg)
+typedValidator p = Scripts.mkTypedValidator @TypedValidator
+    ($$(PlutusTx.compile [|| purchaseValidator ||]) `PlutusTx.applyCode` PlutusTx.liftCode p)
     $$(PlutusTx.compile [|| wrap ||])
   where
     wrap = Scripts.wrapValidator @() @()

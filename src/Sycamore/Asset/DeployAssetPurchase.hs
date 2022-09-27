@@ -46,13 +46,13 @@ writeRedeemer :: IO ()
 writeRedeemer = writeJSON "testnet/afia-validation/redeemer.json" ()
 
 writeAssetPurchaseValidator :: IO (Either (FileError ()) ())
-writeAssetPurchaseValidator = writeValidator "testnet/afia-validation/asset-purchase.plutus" $ validator $ AssetPurchase 
+writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/af-purchase.plutus" $ validator $ AssetPurchase 
                                 {
-                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "Afia#01"
+                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "AF01"
                                    ,aggregator = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "ccd0cf6cb232ad4def96ebe39dfb4b354a529faed336a086b3c13f4a") Nothing 
-                                   ,aggregatorCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "lovelace") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "Ada")
-                                   ,aggregatorAmount = 20000000
-                                   ,beneficiary = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "7a9655c5999a67a71c9ea9d7453ad04e178f7cb368b93ad65dd6cc27") Nothing
-                                   ,collateral = Ledger.Value.assetClass (Ledger.Value.currencySymbol "lovelace") (Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "Ada")
+                                   ,aggregatorCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
+                                   ,aggregatorAmount = 2000000
+                                   ,beneficiary = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "ee5aa2d53d16ba90bcb5dec215c612fad8a7062da5e6d04bce21ed82") Nothing
+                                   ,collateral = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "")
                                    ,collateralAmnt = 2000000
                                 }
