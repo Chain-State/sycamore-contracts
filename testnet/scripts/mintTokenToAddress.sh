@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#a UTXO at address2 mints NFT (Afia#02) and sends to address1 
 oref=$1
 amt=$2
 tokenName=$3
