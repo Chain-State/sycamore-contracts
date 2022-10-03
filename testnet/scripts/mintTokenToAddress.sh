@@ -17,7 +17,7 @@ protocolParams=$rootDir/protocol-params.json
 cardano-cli query protocol-parameters --$TS --out-file $protocolParams
 
 #create a serialised file from the script
-serializedPolicyScriptFile=$rootDir/af01-minted.plutus
+serializedPolicyScriptFile=$rootDir/af03-mint.plutus
 cabal exec token-policy $serializedPolicyScriptFile $oref $amt $tokenName
 
 unsignedFile=$rootDir/tx.unsigned
@@ -38,7 +38,7 @@ cardano-cli transaction build \
     --babbage-era \
     --tx-in $oref \
     --tx-in-collateral $oref \
-    --tx-out "$address 100000000 lovelace + $value" \
+    --tx-out "$address 8000000 lovelace + $value" \
     --mint "$value" \
     --mint-script-file $serializedPolicyScriptFile \
     --mint-redeemer-file $rootDir/unit.json \
