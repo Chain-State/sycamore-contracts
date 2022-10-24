@@ -10,15 +10,10 @@ License-files:       LICENSE
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Sycamore.Basic
-                     , Sycamore.AccessControl
-                     , Sycamore.TypedBasic
-                     , Sycamore.Deploy
-                     , Sycamore.Utils
-                     , Sycamore.Nft.OnChain
-                     , Sycamore.Nft.OffChain
-                     , Sycamore.Asset.AssetPurchase
+  exposed-modules:    
+                       Sycamore.Asset.AssetPurchase
                      , Sycamore.Asset.DeployAssetPurchase
+                     , Sycamore.Nft.OnChain
   build-depends:       aeson
                      , base ^>=4.14.1.0
                      , bytestring

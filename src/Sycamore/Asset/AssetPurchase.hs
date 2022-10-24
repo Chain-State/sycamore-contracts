@@ -17,27 +17,21 @@
 
 module Sycamore.Asset.AssetPurchase where 
 
-import           Control.Monad        hiding (fmap)
-import           Data.List.NonEmpty   (NonEmpty (..))
-import           Data.Map             as Map hiding (filter)
-import           Data.Text            (pack, Text)
-import           Data.Void 
 import           Data.Aeson             (ToJSON, FromJSON)
 import           GHC.Generics           (Generic)
-import           Text.Printf          (printf)
-import           Prelude              (IO, Show, Semigroup (..), String, undefined) 
-import           Schema               (ToSchema)
 
-import           Ledger               hiding (singleton)
-import           Ledger.Constraints   as Constraints
-import qualified Ledger.Typed.Scripts as    Scripts
 import           Ledger.Ada           as Ada
-import           Plutus.V1.Ledger.Api
-import           Plutus.Contract      
-import           PlutusTx             (Data (..))
 import qualified PlutusTx
 import           PlutusTx.Prelude     hiding (Semigroup(..),unless)
+
+import           Ledger
+import qualified Ledger.Typed.Scripts as Scripts
+import           Plutus.V1.Ledger.Scripts
+import           Plutus.V1.Ledger.Api
+import qualified Plutus.V1.Ledger.Scripts as Plutus
 import           Plutus.V1.Ledger.Value
+import           PlutusTx.Builtins.Class
+import qualified Plutus.V1.Ledger.Contexts as PVC
 
 
 data AssetPurchase = AssetPurchase {
@@ -46,9 +40,11 @@ data AssetPurchase = AssetPurchase {
    ,aggregatorCurrency :: AssetClass
    ,aggregatorAmount :: Integer
    ,beneficiary :: Address
+   ,beneficiaryAmount :: Integer
+   ,beneficiaryCurrency :: AssetClass
    ,collateral :: AssetClass
    ,collateralAmnt :: Integer
-} deriving (Show, Generic, FromJSON, ToJSON)
+} deriving (Generic, FromJSON, ToJSON)
 
 
 PlutusTx.makeLift ''AssetPurchase
@@ -63,7 +59,9 @@ purchaseValidator :: AssetPurchase -> () -> () -> ScriptContext -> Bool
 purchaseValidator p () () ctx  = validate 
     where
         validate ::  Bool
-        validate =    txHasOneScInputOnly && validateTxOuts 
+        validate =    txHasOneScInputOnly 
+                      && validateTxOuts 
+                      && sellerIsPaid 
 
 --Only one input should exist pointing to a validator
         txHasOneScInputOnly :: Bool
@@ -77,16 +75,31 @@ purchaseValidator p () () ctx  = validate
         txOutValidate :: TxOut -> Bool
         txOutValidate txo = containsRequiredCollateralAmount txo
         
+        -- collateral added is at least 2 Ada 
         containsRequiredCollateralAmount :: TxOut -> Bool
         containsRequiredCollateralAmount txo =
           collateralAmnt p <= assetClassValueOf (txOutValue txo) (collateral p)
 
---AR address must have 2 Ada deposited. (Not in use currently!)
-        aggregatorIsPaid :: Bool
-        aggregatorIsPaid = assetClassValueOf (valuePaidToAddress ctx (aggregator p)) (aggregatorCurrency p) == aggregatorAmount p
+--         beneficiaryIsPaid :: Bool
+--         beneficiaryIsPaid = assetClassValueOf (valuePaidToAddress ctx (beneficiary p)) (beneficiaryCurrency p) == beneficiaryAmount p
 
-        valuePaidToAddress :: ScriptContext -> Address -> Value
-        valuePaidToAddress ctx addr = mconcat (fmap txOutValue (filter (\x -> txOutAddress x == addr) (txInfoOutputs (scriptContextTxInfo ctx))))
+-- --AR address must have 2 Ada deposited.
+--         aggregatorIsPaid :: Bool
+--         aggregatorIsPaid = assetClassValueOf (valuePaidToAddress ctx (aggregator p)) (aggregatorCurrency p) == aggregatorAmount p
+
+
+--         valuePaidToAddress :: ScriptContext -> Address -> Value
+--         valuePaidToAddress ctx addr = mconcat (fmap txOutValue (filter (\x -> txOutAddress x == addr) (txInfoOutputs (scriptContextTxInfo ctx))))
+
+
+        txVal :: Value 
+        txVal = assetClassValue (assetClass adaSymbol adaToken) 2000000 
+
+        txOut :: PVC.TxOut
+        txOut = PVC.TxOut (aggregator p) txVal Nothing
+
+        sellerIsPaid :: Bool
+        sellerIsPaid =  txVal `elem` (fmap txOutValue $ filter (\x -> PVC.txOutValue x == txVal) (PVC.txInfoOutputs (PVC.scriptContextTxInfo ctx)))
 
         
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 

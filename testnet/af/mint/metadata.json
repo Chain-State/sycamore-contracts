@@ -1,11 +1,11 @@
 {
   "721": {
-    "2276a24f522753b75e8cb19041313b12e56443cac8c96b7704391e10": {
-      "Test NFT#01": {
-        "name": "AF01",
+    "9756702ae3befaa2282ffaa6d992b31a910fcf0b6d757e88d4ae24cc": {
+      "Af03": {
+        "name": "Af03",
         "image": "https://i.postimg.cc/sXYbvwhN/ar.png",
         "mediaType": "image/png",
-        "description": "Test NFT#01",
+        "description": "Test AF NFT #03",
         "files": [
           {
             "name": "Data Files",
