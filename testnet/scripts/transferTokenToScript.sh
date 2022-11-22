@@ -1,14 +1,14 @@
 cardano-cli transaction build-raw \
     --babbage-era \
-    --tx-in f3701be5137aa74e9256886f2e8327a93d51c14b462dfdbe52a4dbaa1cee2254#1  \
+    --tx-in 8dc0a944cfd73091e97d9b173c7b498c31fa62e1d9c0a3a6761c86438f3a2b59#0  \
     --tx-out-datum-hash-file "../af/mint/unit.json" \
-    --tx-out $(cat ../wallets/scripts/af-purchase-script.addr)+6822135+" 1 9756702ae3befaa2282ffaa6d992b31a910fcf0b6d757e88d4ae24cc.41463033" \
-    --tx-out  $(cat ../wallets/wallet1/payment.addr)+1000000 \
+    --tx-out $(cat ../wallets/scripts/dynbaya.addr)+50000000+" 1 2240d8bde3a426f8b714d277fc614df2545bc9e026d9863cf03d69c9.44594e415354592d42415941" \
+    --tx-out  $(cat ../wallets/minter/minter.addr)+49822135 \
     --out-file "../af/lock-script/tx.raw" \
     --fee 177865
 
 cardano-cli transaction sign \
---signing-key-file "../wallets/wallet1/payment.skey" \
+--signing-key-file "../wallets/minter/minter.skey" \
 --tx-body-file  "../af/lock-script/tx.raw" \
 --out-file "../af/lock-script/tx.signed"  \
 --$TS 
