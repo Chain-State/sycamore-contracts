@@ -10,10 +10,10 @@ cardano-cli transaction build-raw \
 cardano-cli transaction sign \
 --signing-key-file "../wallets/minter/minter.skey" \
 --tx-body-file  "../af/lock-script/tx.raw" \
---out-file "../af/lock-script/tx.signed"  \
+--out-file "../af/unlock-script/tx.signed"  \
 --$TS 
 
-cardano-cli transaction submit --tx-file "../af/lock-script/tx.signed" --$TS 
+cardano-cli transaction submit --tx-file "../af/unlock-script/tx.signed" --$TS 
 
 
 # cardano-cli transaction calculate-min-fee \
