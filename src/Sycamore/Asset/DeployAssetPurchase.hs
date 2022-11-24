@@ -46,13 +46,13 @@ writeRedeemer :: IO ()
 writeRedeemer = writeJSON "testnet/af/lock-script/redeemer.json" ()
 
 writeAssetPurchaseValidator :: IO (Either (FileError ()) ())
-writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/af-purchase.plutus" $ validator $ AssetPurchase 
+writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/dynbaya-purchase.plutus" $ validator $ AssetPurchase 
                                 {
-                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "AF03"
-                                   ,aggregator = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "ccd0cf6cb232ad4def96ebe39dfb4b354a529faed336a086b3c13f4a") Nothing 
+                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "DYNASTY-BAYA"
+                                   ,aggregator = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "d3c3cb0b7bbcd93d7e6bd6ac4e222d1e2f68eecf43f84f1e1dc21f62") Nothing 
                                    ,aggregatorCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,aggregatorAmount = 2000000
-                                   ,beneficiary = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "ee5aa2d53d16ba90bcb5dec215c612fad8a7062da5e6d04bce21ed82") Nothing
+                                   ,beneficiary = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "da23034939ff35e8d65f4280b30c64274ce528df929deb94708727e1") Nothing
                                    ,beneficiaryCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,beneficiaryAmount = 2000000
                                    ,collateral = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "")

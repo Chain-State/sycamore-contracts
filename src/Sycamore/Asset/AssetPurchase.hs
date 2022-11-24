@@ -63,12 +63,10 @@ purchaseValidator p () () ctx  = validate
                       && validateTxOuts 
                       && sellerIsPaid 
 
---Only one input should exist pointing to a validator
         txHasOneScInputOnly :: Bool
         txHasOneScInputOnly =
           length (filter isJust $ toValidatorHash . txOutAddress . txInInfoResolved <$> txInfoInputs (scriptContextTxInfo ctx)) == 1
 
---At least one output must contain a collateral amount of 2 Ada or less
         validateTxOuts :: Bool
         validateTxOuts = any txOutValidate (txInfoOutputs (scriptContextTxInfo ctx))
 
