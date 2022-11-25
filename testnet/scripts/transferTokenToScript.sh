@@ -1,9 +1,9 @@
 cardano-cli transaction build-raw \
     --babbage-era \
-    --tx-in 8dc0a944cfd73091e97d9b173c7b498c31fa62e1d9c0a3a6761c86438f3a2b59#0  \
+    --tx-in c7118dee931b8ac0665fab57f437ff520f095d7bb518444f564ea885d010ce86#0  \
     --tx-out-datum-hash-file "../af/mint/unit.json" \
-    --tx-out $(cat ../wallets/scripts/dynbaya.addr)+50000000+" 1 2240d8bde3a426f8b714d277fc614df2545bc9e026d9863cf03d69c9.44594e415354592d42415941" \
-    --tx-out  $(cat ../wallets/minter/minter.addr)+49822135 \
+    --tx-out $(cat ../wallets/scripts/gravity.addr)+30000000+" 1 28c105de12784e5d26fa32c83184e7e89235fe85c7843ffeda2fda01.47524156495459233032" \
+    --tx-out  $(cat ../wallets/minter/minter.addr)+9822135 \
     --out-file "../af/lock-script/tx.raw" \
     --fee 177865
 
