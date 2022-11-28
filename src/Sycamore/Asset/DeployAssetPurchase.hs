@@ -20,9 +20,9 @@ import qualified Data.Text.Encoding as TE
 
 import           PlutusTx              (Data (..))
 import qualified PlutusTx
-import qualified Ledger as L
+import qualified Plutus.V1.Ledger.Api as L
+import qualified Data.String as DS
 import qualified Ledger.Value
-import PlutusTx.Builtins.Internal
 
 import          Sycamore.Asset.AssetPurchase 
 
@@ -46,13 +46,13 @@ writeRedeemer :: IO ()
 writeRedeemer = writeJSON "testnet/af/lock-script/redeemer.json" ()
 
 writeAssetPurchaseValidator :: IO (Either (FileError ()) ())
-writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/dynbaya-purchase.plutus" $ validator $ AssetPurchase 
+writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/test02.plutus" $ validator $ AssetPurchase 
                                 {
-                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "DYNASTY-BAYA"
-                                   ,aggregator = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "d3c3cb0b7bbcd93d7e6bd6ac4e222d1e2f68eecf43f84f1e1dc21f62") Nothing 
+                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "GRAVITY"
+                                   ,aggregator = L.PubKeyHash "d3c3cb0b7bbcd93d7e6bd6ac4e222d1e2f68eecf43f84f1e1dc21f62"
                                    ,aggregatorCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,aggregatorAmount = 2000000
-                                   ,beneficiary = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "da23034939ff35e8d65f4280b30c64274ce528df929deb94708727e1") Nothing
+                                   ,beneficiary = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString  "da23034939ff35e8d65f4280b30c64274ce528df929deb94708727e1"
                                    ,beneficiaryCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,beneficiaryAmount = 2000000
                                    ,collateral = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "")
