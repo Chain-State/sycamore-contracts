@@ -38,7 +38,7 @@ cardano-cli transaction build \
     --babbage-era \
     --tx-in $oref \
     --tx-in-collateral $oref \
-    --tx-out "$address 40000000 lovelace + $value" \
+    --tx-out "$address 10000000 lovelace + $value" \
     --mint "$value" \
     --mint-script-file $serializedPolicyScriptFile \
     --mint-redeemer-file $rootDir/unit.json \

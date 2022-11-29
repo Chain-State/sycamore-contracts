@@ -57,9 +57,9 @@ import Plutus.V1.Ledger.Api
 
 data AssetPurchase = AssetPurchase {
     saleNftTn :: TokenName
-   ,aggregator   :: PubKeyHash 
-   ,aggregatorCurrency :: AssetClass
-   ,aggregatorAmount :: Integer
+   ,minter   :: PubKeyHash 
+   ,minterCurrency :: AssetClass
+   ,minterAmount :: Integer
    ,beneficiary :: PubKeyHash
    ,beneficiaryAmount :: Integer
    ,beneficiaryCurrency :: AssetClass
@@ -83,6 +83,7 @@ purchaseValidator p () () ctx  = validate
         validate =    txHasOneScInputOnly 
                       && validateTxOuts 
                       && beneficiaryIsPaid 
+                      && minterIsPaid
 
         txHasOneScInputOnly :: Bool
         txHasOneScInputOnly =
@@ -99,21 +100,11 @@ purchaseValidator p () () ctx  = validate
         containsRequiredCollateralAmount txo =
           collateralAmnt p <= assetClassValueOf (txOutValue txo) (collateral p)
 
-        -- txVal :: Value 
-        -- txVal = assetClassValue (assetClass adaSymbol adaToken) 2000000 
-
-        -- txOut :: TxOut
-        -- txOut = TxOut (aggregator p) txVal Nothing
-
-        -- sellerIsPaid :: Bool
-        -- sellerIsPaid =  txVal `elem` fmap txOutValue $ filter (\x -> txOutValue x == txVal) (txInfoOutputs (scriptContextTxInfo ctx))
-
         beneficiaryIsPaid :: Bool
         beneficiaryIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (beneficiary p)) (beneficiaryCurrency p) == beneficiaryAmount p
 
--- --AR address must have 2 Ada deposited.
---         aggregatorIsPaid :: Bool
---         aggregatorIsPaid = assetClassValueOf (valuePaidToAddress ctx (aggregator p)) (aggregatorCurrency p) == aggregatorAmount p
+        minterIsPaid :: Bool
+        minterIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (minter p)) (minterCurrency p) == minterAmount p
 
 
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
