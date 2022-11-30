@@ -46,9 +46,9 @@ writeRedeemer :: IO ()
 writeRedeemer = writeJSON "testnet/af/lock-script/redeemer.json" ()
 
 writeAssetPurchaseValidator :: IO (Either (FileError ()) ())
-writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/test06.plutus" $ validator $ AssetPurchase 
+writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/test08.plutus" $ validator $ AssetPurchase 
                                 {
-                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "Test#06"
+                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "Test#08"
                                    ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString "dd37676faf20920c167c00c474ba697c03da622cb8b9e585b0f7aa72"
                                    ,minterCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,minterAmount = 2000000
@@ -57,4 +57,5 @@ writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/test06.plut
                                    ,beneficiaryAmount = 2000000
                                    ,collateral = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "")
                                    ,collateralAmnt = 2000000
+                                   ,saleExpiresOn = 1669794966000 
                                 }

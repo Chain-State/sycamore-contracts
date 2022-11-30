@@ -65,6 +65,7 @@ data AssetPurchase = AssetPurchase {
    ,beneficiaryCurrency :: AssetClass
    ,collateral :: AssetClass
    ,collateralAmnt :: Integer
+   ,saleExpiresOn :: POSIXTime
 } deriving (Generic, FromJSON, ToJSON)
 
 
@@ -84,6 +85,7 @@ purchaseValidator p () () ctx  = validate
                       && validateTxOuts 
                       && beneficiaryIsPaid 
                       && minterIsPaid
+                      && saleValid
 
         txHasOneScInputOnly :: Bool
         txHasOneScInputOnly =
@@ -105,6 +107,19 @@ purchaseValidator p () () ctx  = validate
 
         minterIsPaid :: Bool
         minterIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (minter p)) (minterCurrency p) == minterAmount p
+
+        --tx should be valid before 36 hours or only if the tx is a refund* tx
+        saleValid :: Bool
+        saleValid = traceIfFalse "Time Interval Failed" $ member (saleExpiresOn p) $ txInfoValidRange (scriptContextTxInfo ctx)
+
+        -- saleValid = traceIfFalse "Time Interval Failed" before (saleExpiresOn p) (txInfoValidRange (scriptContextTxInfo ctx))
+
+        --a refund tx should have the NFT as input and the minter address as the output.
+
+
+        -- signedByBuyer :: Bool
+        -- signedByBuyer = txSignedBy (scriptContextTxInfo ctx) (buyer p)
+
 
 
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
