@@ -1,26 +1,16 @@
 cardano-cli transaction build-raw \
     --babbage-era \
-    --tx-in f3701be5137aa74e9256886f2e8327a93d51c14b462dfdbe52a4dbaa1cee2254#1  \
-    --tx-out-datum-hash-file "../af/mint/unit.json" \
-    --tx-out $(cat ../wallets/scripts/af-purchase-script.addr)+6822135+" 1 9756702ae3befaa2282ffaa6d992b31a910fcf0b6d757e88d4ae24cc.41463033" \
-    --tx-out  $(cat ../wallets/wallet1/payment.addr)+1000000 \
-    --out-file "../af/lock-script/tx.raw" \
+    --tx-in 9947a03001f4d8b403156dc9b67796cc82a9d7d56f025ca6ff042764412337ab#0  \
+    --tx-out-datum-hash-file "../af/lock-script/unit.json" \
+    --tx-out $(cat ../wallets/scripts/test05.addr)+8000000+" 1 40cf0beda55e58f0fa7d19886074415902e0c4ff4538f2e95256114b.54455354233035" \
+    --tx-out  $(cat ../wallets/minter/minter.addr)+1822135 \
+    --out-file "../af/lock-script/txs/tx.raw" \
     --fee 177865
 
 cardano-cli transaction sign \
---signing-key-file "../wallets/wallet1/payment.skey" \
---tx-body-file  "../af/lock-script/tx.raw" \
---out-file "../af/lock-script/tx.signed"  \
+--signing-key-file "../wallets/minter/minter.skey" \
+--tx-body-file  "../af/lock-script/txs/tx.raw" \
+--out-file "../af/lock-script/txs/tx.signed"  \
 --$TS 
 
-cardano-cli transaction submit --tx-file "../af/lock-script/tx.signed" --$TS 
-
-
-# cardano-cli transaction calculate-min-fee \
-# --tx-body-file  "../af/lock-script/tx.raw" \
-# --tx-in-count 1 \
-# --tx-out-count 2 \
-# --witness-count 1 \
-# --$TS \
-# --protocol-params-file "../af/mint/protocol-params.json"
-
+cardano-cli transaction submit --tx-file "../af/lock-script/txs/tx.signed" --$TS 

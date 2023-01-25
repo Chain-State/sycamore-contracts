@@ -17,33 +17,55 @@
 
 module Sycamore.Asset.AssetPurchase where 
 
-import           Data.Aeson             (ToJSON, FromJSON)
-import           GHC.Generics           (Generic)
+-- import           Data.Aeson             (ToJSON, FromJSON)
+-- import           GHC.Generics           (Generic)
 
-import           Ledger.Ada           as Ada
-import qualified PlutusTx
-import           PlutusTx.Prelude     hiding (Semigroup(..),unless)
+-- import qualified PlutusTx
+-- import           PlutusTx.Prelude     hiding (Semigroup(..),unless)
+-- import           PlutusTx.Builtins.Class
 
-import           Ledger
-import qualified Ledger.Typed.Scripts as Scripts
-import           Plutus.V1.Ledger.Scripts
-import           Plutus.V1.Ledger.Api
-import qualified Plutus.V1.Ledger.Scripts as Plutus
+-- import           Ledger
+-- import qualified Ledger.Typed.Scripts as Scripts
+-- import           Ledger.Ada           as Ada
+-- import           Plutus.V1.Ledger.Scripts
+-- import           Plutus.V1.Ledger.Api
+-- import qualified Plutus.V1.Ledger.Scripts as Plutus
+-- import           Plutus.V1.Ledger.Value
+-- import qualified Plutus.V1.Ledger.Contexts as PVC
+
+
+import           Cardano.Api.Shelley (PlutusScript (..), PlutusScriptV1)
+
+import           Codec.Serialise ( serialise )
+import           Data.Aeson           (ToJSON, FromJSON)
+import qualified Data.ByteString.Lazy as LBS
+import qualified Data.ByteString.Short as SBS
+import GHC.Generics (Generic)
 import           Plutus.V1.Ledger.Value
-import           PlutusTx.Builtins.Class
-import qualified Plutus.V1.Ledger.Contexts as PVC
+import           Ledger.Address
+import           Plutus.V1.Ledger.Time
+import           Plutus.V1.Ledger.Scripts
+import qualified Ledger.Typed.Scripts as Scripts
+
+import           Prelude                 (Semigroup (..), Show (..))
+import           PlutusTx.Prelude hiding (Semigroup (..))
+import qualified PlutusTx
+import           Ledger               hiding (singleton)
+import qualified Plutus.V1.Ledger.Scripts as Plutus
+import Plutus.V1.Ledger.Api
 
 
 data AssetPurchase = AssetPurchase {
     saleNftTn :: TokenName
-   ,aggregator   :: Address 
-   ,aggregatorCurrency :: AssetClass
-   ,aggregatorAmount :: Integer
-   ,beneficiary :: Address
+   ,minter   :: PubKeyHash 
+   ,minterCurrency :: AssetClass
+   ,minterAmount :: Integer
+   ,beneficiary :: PubKeyHash
    ,beneficiaryAmount :: Integer
    ,beneficiaryCurrency :: AssetClass
    ,collateral :: AssetClass
    ,collateralAmnt :: Integer
+   ,saleExpiresOn :: POSIXTime
 } deriving (Generic, FromJSON, ToJSON)
 
 
@@ -61,14 +83,14 @@ purchaseValidator p () () ctx  = validate
         validate ::  Bool
         validate =    txHasOneScInputOnly 
                       && validateTxOuts 
-                      && sellerIsPaid 
+                      && beneficiaryIsPaid 
+                      && minterIsPaid
+                      && saleValid
 
---Only one input should exist pointing to a validator
         txHasOneScInputOnly :: Bool
         txHasOneScInputOnly =
           length (filter isJust $ toValidatorHash . txOutAddress . txInInfoResolved <$> txInfoInputs (scriptContextTxInfo ctx)) == 1
 
---At least one output must contain a collateral amount of 2 Ada or less
         validateTxOuts :: Bool
         validateTxOuts = any txOutValidate (txInfoOutputs (scriptContextTxInfo ctx))
 
@@ -80,28 +102,26 @@ purchaseValidator p () () ctx  = validate
         containsRequiredCollateralAmount txo =
           collateralAmnt p <= assetClassValueOf (txOutValue txo) (collateral p)
 
---         beneficiaryIsPaid :: Bool
---         beneficiaryIsPaid = assetClassValueOf (valuePaidToAddress ctx (beneficiary p)) (beneficiaryCurrency p) == beneficiaryAmount p
+        beneficiaryIsPaid :: Bool
+        beneficiaryIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (beneficiary p)) (beneficiaryCurrency p) == beneficiaryAmount p
 
--- --AR address must have 2 Ada deposited.
---         aggregatorIsPaid :: Bool
---         aggregatorIsPaid = assetClassValueOf (valuePaidToAddress ctx (aggregator p)) (aggregatorCurrency p) == aggregatorAmount p
+        minterIsPaid :: Bool
+        minterIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (minter p)) (minterCurrency p) == minterAmount p
+
+        --tx should be valid before 36 hours or only if the tx is a refund* tx
+        saleValid :: Bool
+        saleValid = traceIfFalse "Time Interval Failed" $ member (saleExpiresOn p) $ txInfoValidRange (scriptContextTxInfo ctx)
+
+        -- saleValid = traceIfFalse "Time Interval Failed" before (saleExpiresOn p) (txInfoValidRange (scriptContextTxInfo ctx))
+
+        --a refund tx should have the NFT as input and the minter address as the output.
 
 
---         valuePaidToAddress :: ScriptContext -> Address -> Value
---         valuePaidToAddress ctx addr = mconcat (fmap txOutValue (filter (\x -> txOutAddress x == addr) (txInfoOutputs (scriptContextTxInfo ctx))))
+        -- signedByBuyer :: Bool
+        -- signedByBuyer = txSignedBy (scriptContextTxInfo ctx) (buyer p)
 
 
-        txVal :: Value 
-        txVal = assetClassValue (assetClass adaSymbol adaToken) 2000000 
 
-        txOut :: PVC.TxOut
-        txOut = PVC.TxOut (aggregator p) txVal Nothing
-
-        sellerIsPaid :: Bool
-        sellerIsPaid =  txVal `elem` (fmap txOutValue $ filter (\x -> PVC.txOutValue x == txVal) (PVC.txInfoOutputs (PVC.scriptContextTxInfo ctx)))
-
-        
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
 --the information about the datum and redeemer that plutus core expects.
 data TypedValidator

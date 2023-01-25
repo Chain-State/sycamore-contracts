@@ -20,9 +20,9 @@ import qualified Data.Text.Encoding as TE
 
 import           PlutusTx              (Data (..))
 import qualified PlutusTx
-import qualified Ledger as L
+import qualified Plutus.V1.Ledger.Api as L
+import qualified Data.String as DS
 import qualified Ledger.Value
-import PlutusTx.Builtins.Internal
 
 import          Sycamore.Asset.AssetPurchase 
 
@@ -46,15 +46,16 @@ writeRedeemer :: IO ()
 writeRedeemer = writeJSON "testnet/af/lock-script/redeemer.json" ()
 
 writeAssetPurchaseValidator :: IO (Either (FileError ()) ())
-writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/af-purchase.plutus" $ validator $ AssetPurchase 
+writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/test08.plutus" $ validator $ AssetPurchase 
                                 {
-                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "AF03"
-                                   ,aggregator = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "ccd0cf6cb232ad4def96ebe39dfb4b354a529faed336a086b3c13f4a") Nothing 
-                                   ,aggregatorCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
-                                   ,aggregatorAmount = 2000000
-                                   ,beneficiary = L.pubKeyHashAddress (L.PaymentPubKeyHash $  L.PubKeyHash $ BuiltinByteString $  TE.encodeUtf8 $ T.pack "ee5aa2d53d16ba90bcb5dec215c612fad8a7062da5e6d04bce21ed82") Nothing
+                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "Test#08"
+                                   ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString "dd37676faf20920c167c00c474ba697c03da622cb8b9e585b0f7aa72"
+                                   ,minterCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
+                                   ,minterAmount = 2000000
+                                   ,beneficiary = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString  "da23034939ff35e8d65f4280b30c64274ce528df929deb94708727e1"
                                    ,beneficiaryCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,beneficiaryAmount = 2000000
                                    ,collateral = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "")
                                    ,collateralAmnt = 2000000
+                                   ,saleExpiresOn = 1669794966000 
                                 }
