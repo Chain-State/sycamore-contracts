@@ -17,23 +17,6 @@
 
 module Sycamore.Asset.AssetPurchase where 
 
--- import           Data.Aeson             (ToJSON, FromJSON)
--- import           GHC.Generics           (Generic)
-
--- import qualified PlutusTx
--- import           PlutusTx.Prelude     hiding (Semigroup(..),unless)
--- import           PlutusTx.Builtins.Class
-
--- import           Ledger
--- import qualified Ledger.Typed.Scripts as Scripts
--- import           Ledger.Ada           as Ada
--- import           Plutus.V1.Ledger.Scripts
--- import           Plutus.V1.Ledger.Api
--- import qualified Plutus.V1.Ledger.Scripts as Plutus
--- import           Plutus.V1.Ledger.Value
--- import qualified Plutus.V1.Ledger.Contexts as PVC
-
-
 import           Cardano.Api.Shelley (PlutusScript (..), PlutusScriptV1)
 
 import           Codec.Serialise ( serialise )
