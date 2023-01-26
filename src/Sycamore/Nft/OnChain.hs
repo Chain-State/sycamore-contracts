@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds           #-}
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE DeriveAnyClass      #-}
 {-# LANGUAGE DeriveGeneric       #-}
 {-# LANGUAGE FlexibleContexts    #-}
@@ -18,8 +19,9 @@ module Sycamore.Nft.OnChain
 
 import qualified PlutusTx
 import           PlutusTx.Prelude            hiding (Semigroup(..), unless)
-import           Ledger                      hiding (mint, singleton)
 import qualified Ledger.Typed.Scripts        as Scripts
+import Plutus.Script.Utils.V2.Scripts (scriptCurrencySymbol)
+import Plutus.V2.Ledger.Api
 import           Ledger.Value                as Value
 
 --This policy script defines the constraints under which the tokens can be minted.
@@ -44,7 +46,7 @@ mkTokenPolicy oref tn amt () ctx = traceIfFalse "UTxO not consumed"   hasUTxO   
 
 tokenPolicy :: TxOutRef -> TokenName -> Integer -> Scripts.MintingPolicy
 tokenPolicy oref tn amt = mkMintingPolicyScript $
-    $$(PlutusTx.compile [|| \oref' tn' amt' -> Scripts.wrapMintingPolicy $ mkTokenPolicy oref' tn' amt' ||])
+    $$(PlutusTx.compile [|| \oref' tn' amt' -> Scripts.mkUntypedMintingPolicy $ mkTokenPolicy oref' tn' amt' ||])
     `PlutusTx.applyCode`
     PlutusTx.liftCode oref
     `PlutusTx.applyCode`
