@@ -17,7 +17,7 @@ protocolParams=$rootDir/protocol-params.json
 cardano-cli query protocol-parameters --$TS --out-file $protocolParams
 
 #create a serialised file from the script
-serializedPolicyScriptFile=$rootDir/dynasty-baya.plutus
+serializedPolicyScriptFile=$rootDir/afyaRekod0010.plutus
 cabal exec token-policy $serializedPolicyScriptFile $oref $amt $tokenName
 
 unsignedFile=$rootDir/tx.unsigned
