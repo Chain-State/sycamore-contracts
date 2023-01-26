@@ -14,29 +14,34 @@
 {-# LANGUAGE TypeApplications           #-}
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
+{-# LANGUAGE ImportQualifiedPost        #-}
 
 module Sycamore.Asset.AssetPurchase where 
 
-import           Cardano.Api.Shelley (PlutusScript (..), PlutusScriptV1)
-
-import           Codec.Serialise ( serialise )
-import           Data.Aeson           (ToJSON, FromJSON)
-import qualified Data.ByteString.Lazy as LBS
-import qualified Data.ByteString.Short as SBS
+-- import Cardano.Api.Shelley (PlutusScript (..), PlutusScriptV1)
+import Prelude (Semigroup (..), Show (..))
+import Codec.Serialise ( serialise )
+import Data.Aeson (ToJSON, FromJSON)
+import Data.ByteString.Lazy qualified as LBS
+import Data.ByteString.Short qualified as SBS
 import GHC.Generics (Generic)
-import           Plutus.V1.Ledger.Value
-import           Ledger.Address
-import           Plutus.V1.Ledger.Time
-import           Plutus.V1.Ledger.Scripts
-import qualified Ledger.Typed.Scripts as Scripts
 
-import           Prelude                 (Semigroup (..), Show (..))
-import           PlutusTx.Prelude hiding (Semigroup (..))
-import qualified PlutusTx
-import           Ledger               hiding (singleton)
-import qualified Plutus.V1.Ledger.Scripts as Plutus
-import Plutus.V1.Ledger.Api
+import Plutus.V1.Ledger.Value
+import Plutus.V1.Ledger.Time
+import Plutus.V2.Ledger.Api
+import Plutus.V2.Ledger.Contexts
 
+import Plutus.Script.Utils.Typed qualified as Scripts
+import Plutus.Script.Utils.V2.Contexts hiding (valuePaidTo, ScriptContext)
+import Plutus.Script.Utils.V2.Typed.Scripts.Validators qualified as Scripts
+import PlutusTx.Prelude hiding (Semigroup (..))
+import PlutusTx qualified 
+
+import Ledger hiding (singleton, TxOut, ScriptContext, txOutAddress, scriptContextTxInfo, txOutValue, txInInfoResolved, txInfoInputs, txInfoOutputs, scriptContextTxInfo, txInfoValidRange, valuePaidTo)
+
+-- import qualified Plutus.V1.Ledger.Scripts as Plutus
+-- import Plutus.V1.Ledger.Scripts
+-- import qualified Ledger.Typed.Scripts as Scr
 
 data AssetPurchase = AssetPurchase {
     saleNftTn :: TokenName
@@ -107,17 +112,16 @@ purchaseValidator p () () ctx  = validate
 
 --for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
 --the information about the datum and redeemer that plutus core expects.
-data TypedValidator
-instance Scripts.ValidatorTypes TypedValidator where
-    type instance DatumType TypedValidator = ()
-    type instance RedeemerType TypedValidator = () 
+data Typed
+instance Scripts.ValidatorTypes Typed where
+    type instance DatumType Typed = ()
+    type instance RedeemerType Typed = () 
 
-typedValidator :: AssetPurchase -> Scripts.TypedValidator TypedValidator
-typedValidator p = Scripts.mkTypedValidator @TypedValidator
-    ($$(PlutusTx.compile [|| purchaseValidator ||]) `PlutusTx.applyCode` PlutusTx.liftCode p)
-    $$(PlutusTx.compile [|| wrap ||])
+typedValidator :: AssetPurchase -> Scripts.TypedValidator Typed
+typedValidator p = Scripts.mkTypedValidator @Typed
+    ($$(PlutusTx.compile [|| purchaseValidator ||]) `PlutusTx.applyCode` PlutusTx.liftCode p) $$(PlutusTx.compile [|| wrap ||])
   where
-    wrap = Scripts.wrapValidator @() @()
+    wrap = Scripts.mkUntypedValidator
 
 validator :: AssetPurchase -> Validator
 validator = Scripts.validatorScript . typedValidator
@@ -127,5 +131,5 @@ valHash :: AssetPurchase -> Ledger.ValidatorHash
 valHash = Scripts.validatorHash . typedValidator
 
 --generate address from the validator
-scrAddress :: AssetPurchase -> Ledger.Address
-scrAddress = scriptAddress . validator
+scrAddress ::  AssetPurchase -> Ledger.Address
+scrAddress = scriptHashAddress . valHash

@@ -34,6 +34,7 @@ library
                      , plutus-pab
                      , plutus-tx-plugin     >=1.0.0
                      , plutus-tx    >=1.0.0
+                     , plutus-script-utils
                      , prettyprinter
                      , serialise
                      , text 
