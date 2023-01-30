@@ -14,7 +14,7 @@ module Sycamore.Utils
     ) where
 
 import           Cardano.Api                 as API
-import           Cardano.Api.Shelley         (Address (..), PlutusScript (..))
+import           Cardano.Api.Shelley         (Address (..), PlutusScriptV2 (..), PlutusScript(PlutusScriptSerialised))
 import           Cardano.Crypto.Hash.Class   (hashToBytes)
 import           Cardano.Ledger.Credential   as Ledger
 import           Cardano.Ledger.Crypto       (StandardCrypto)
@@ -125,7 +125,7 @@ cidToString :: ContractInstanceId -> String
 cidToString = show . unContractInstanceId
 
 writeMintingPolicy :: FilePath -> Plutus.MintingPolicy -> IO (Either (FileError ()) ())
-writeMintingPolicy file = writeFileTextEnvelope @(PlutusScript PlutusScriptV1) file Nothing . PlutusScriptSerialised . SBS.toShort . LBS.toStrict . serialise . Plutus.getMintingPolicy
+writeMintingPolicy file = writeFileTextEnvelope @(PlutusScript PlutusScriptV2) file Nothing . PlutusScriptSerialised . SBS.toShort . LBS.toStrict . serialise . Plutus.getMintingPolicy
 
 unsafeTokenNameToHex :: TokenName -> String
 unsafeTokenNameToHex = BS8.unpack . serialiseToRawBytesHex . fromJust . deserialiseFromRawBytes AsAssetName . getByteString . unTokenName
