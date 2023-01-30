@@ -1,19 +1,12 @@
 {
   "721": {
-    "9756702ae3befaa2282ffaa6d992b31a910fcf0b6d757e88d4ae24cc": {
-      "Af03": {
-        "name": "Af03",
-        "image": "https://i.postimg.cc/sXYbvwhN/ar.png",
+    "ec7f89259dbb9e720f0f5127a4107aec2cc9e0c49109e6d4ff0c568a": {
+      "GRAVITY": {
+        "name": "Test NFT Gravity#01",
+        "image": "ipfs://ipfs/QmTGxReZszfzCMenQcFNqCoWpTUyLEKT878cT73AKTmJxK",
         "mediaType": "image/png",
-        "description": "Test AF NFT #03",
-        "files": [
-          {
-            "name": "Data Files",
-            "mediaType": "application/vnd.ms-excel",
-            "src": "https://easyupload.io/df93gc"
-        }]
+        "description": "Gravity Test Token"
       }
-    },
-    "version": "1.0"
+    }
   }
 }

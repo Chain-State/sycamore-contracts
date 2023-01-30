@@ -51,10 +51,10 @@ credentialLedgerToPlutus :: Ledger.Credential a StandardCrypto -> Plutus.Credent
 credentialLedgerToPlutus (ScriptHashObj (ScriptHash h)) = Plutus.ScriptCredential $ Plutus.ValidatorHash $ toBuiltin $ hashToBytes h
 credentialLedgerToPlutus (KeyHashObj (KeyHash h))       = Plutus.PubKeyCredential $ Plutus.PubKeyHash $ toBuiltin $ hashToBytes h
 
-stakeReferenceLedgerToPlutus :: Ledger.StakeReference StandardCrypto -> Maybe Plutus.StakingCredential
-stakeReferenceLedgerToPlutus (StakeRefBase x)                   = Just $ StakingHash $ credentialLedgerToPlutus x
-stakeReferenceLedgerToPlutus (StakeRefPtr (Ptr (SlotNo x) y z)) = Just $ StakingPtr (fromIntegral x) (fromIntegral y) (fromIntegral z)
-stakeReferenceLedgerToPlutus StakeRefNull                       = Nothing
+-- stakeReferenceLedgerToPlutus :: Ledger.StakeReference StandardCrypto -> Maybe Plutus.StakingCredential
+-- stakeReferenceLedgerToPlutus (StakeRefBase x)                   = Just $ StakingHash $ credentialLedgerToPlutus x
+-- stakeReferenceLedgerToPlutus (StakeRefPtr (Ptr (SlotNo x) y z)) = Just $ StakingPtr (fromIntegral x) (fromIntegral y) (fromIntegral z)
+-- stakeReferenceLedgerToPlutus StakeRefNull                       = Nothing
 
 tryReadAddress :: String -> Maybe Plutus.Address
 tryReadAddress x = case deserialiseAddress AsAddressAny $ pack x of
@@ -62,7 +62,7 @@ tryReadAddress x = case deserialiseAddress AsAddressAny $ pack x of
     Just (AddressByron _)                        -> Nothing
     Just (AddressShelley (ShelleyAddress _ p s)) -> Just Plutus.Address
         { Plutus.addressCredential        = credentialLedgerToPlutus p
-        , Plutus.addressStakingCredential = stakeReferenceLedgerToPlutus s
+        , Plutus.addressStakingCredential = Nothing 
         }
 
 tryReadWalletId :: String -> Maybe WalletId

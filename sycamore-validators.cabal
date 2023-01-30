@@ -1,10 +1,10 @@
 Cabal-Version:      2.4
 Name:               sycamore-validators 
-Version:            0.1.0.0
+Version:            1.0.0.0
 Author:             Kelly Muhindi 
 Maintainer:          kmuhindi@proton.me
 Build-Type:          Simple
-Copyright:           © 2022 African Blockchain Center
+Copyright:           © 2023 Africa Blockchain Center
 License:             Apache-2.0
 License-files:       LICENSE
 
@@ -14,10 +14,11 @@ library
                        Sycamore.Asset.AssetPurchase
                      , Sycamore.Asset.DeployAssetPurchase
                      , Sycamore.Nft.OnChain
+                     , Sycamore.Utils
   build-depends:       aeson
                      , base ^>=4.14.1.0
                      , bytestring
-                     , cardano-api
+                     , cardano-api    >=1.35
                      , cardano-crypto-class
                      , cardano-ledger-core
                      , cardano-ledger-shelley
@@ -26,15 +27,14 @@ library
                      , data-default
                      , freer-extras
                      , openapi3
-                     , playground-common
                      , plutus-contract
-                     , plutus-ledger
-                     , plutus-ledger-api
+                     , plutus-ledger    
+                     , plutus-ledger-api    >=1.0.0
                      , plutus-ledger-constraints
                      , plutus-pab
-                     , plutus-tx-plugin
-                     , plutus-tx
-                     , plutus-use-cases
+                     , plutus-tx-plugin     >=1.0.0
+                     , plutus-tx    >=1.0.0
+                     , plutus-script-utils
                      , prettyprinter
                      , serialise
                      , text 
@@ -58,3 +58,6 @@ executable token-name-hex
                      , sycamore-validators
 
 
+build-tool-depends:
+  , cardano-node:cardano-node   >=1.35
+  , cardano-submit-api:cardano-submit-api:    >=1.35
