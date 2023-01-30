@@ -1,0 +1,24 @@
+  {
+    "721": {
+      "227889a2f975639a87a3bac6fa3162710c0cadf0ad5472211d43e5fd": {
+        "AR-UPP#13": {
+          "name": "Test NFT Gravity#01",
+          "image": "ipfs://QmTGxReZszfzCMenQcFNqCoWpTUyLEKT878cT73AKTmJxK",
+          "mediaType": "image/png",
+          "description": "AfyaRekod-UPP Test Token #13",
+          "files": [
+            {
+              "mediaType": "image/png",
+              "name": "data-files-reference",
+              "src": "ipfs://QmTGxReZszfzCMenQcFNqCoWpTUyLEKT878cT73AKTmJxK"
+            },
+            {
+              "mediaType": "image/xls",
+              "name": "med files",
+              "src": "ipfs://QmRommEDQQhzxZtTm2KxVcRMfHRQYQ6kWfP6pyxrHnmLvx"
+            }
+          ]
+        }
+      }
+    }
+  }
