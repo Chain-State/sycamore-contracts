@@ -17,8 +17,8 @@ protocolParams=$rootDir/protocol-params.json
 cardano-cli query protocol-parameters --$TS --out-file $protocolParams
 
 #create a serialised file from the script
-serializedPolicyScriptFile=$rootDir/$3.plutus
-cabal exec token-policy $serializedPolicyScriptFile $oref $amt $tokenName
+serializedPolicyScriptFile=$rootDir/nft-mint-V2.plutus
+# cabal exec token-policy $serializedPolicyScriptFile $oref $amt $tokenName
 
 unsignedFile=$rootDir/tx.unsigned
 signedFile=$rootDir/tx.signed
