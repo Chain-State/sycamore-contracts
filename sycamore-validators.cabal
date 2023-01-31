@@ -14,7 +14,6 @@ library
                        Sycamore.Asset.AssetPurchase
                      , Sycamore.Asset.DeployAssetPurchase
                      , Sycamore.Nft.OnChain
-                     , Sycamore.Nft.TestMint
                      , Sycamore.Nft.MintExample
                      , Sycamore.Utils
   build-depends:       aeson
