@@ -1,6 +1,6 @@
 module Main
-    ( main
-    ) where
+    ( main ) 
+    where
 
 import Control.Exception    (throwIO)
 import Data.String          (IsString (..))

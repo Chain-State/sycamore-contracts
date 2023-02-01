@@ -14,7 +14,7 @@
 {-# LANGUAGE TypeOperators         #-}
 
 module Sycamore.Nft.MintExample 
-  ( printRedeemer,
+  ( 
     serialisedScript,
     scriptSBS,
     script,
@@ -36,6 +36,7 @@ import qualified Data.ByteString.Short                as SBS
 import           Data.Functor                         (void)
 import qualified Ledger.Typed.Scripts                 as Scripts
 import           Ledger.Value                         as Value
+
 import qualified Plutus.Script.Utils.V2.Typed.Scripts as PSU.V2
 import qualified Plutus.V1.Ledger.Api                 as PlutusV1
 import qualified Plutus.V2.Ledger.Api                 as PlutusV2
@@ -44,6 +45,7 @@ import qualified PlutusTx
 import           PlutusTx.Prelude                     as P hiding
                                                            (Semigroup (..),
                                                             unless, (.))
+                                                            
 import           Prelude                              (IO, Semigroup (..),
                                                        Show (..), print, (.))
 
@@ -64,7 +66,7 @@ redeemer = NFTParams { mpAmount = 1,
                        ,mpTxOutRef = PlutusV2.TxOutRef {txOutRefId = "c28dcebc450ca3b44f17f12b03eb7f177da2b621eed43a4076cee7769b0915af", txOutRefIdx = 0}
                      }
 
-printRedeemer = print $ "Redeemer: " <> A.encode (scriptDataToJson ScriptDataJsonDetailedSchema $ fromPlutusData $ PlutusV2.toData redeemer)
+-- printRedeemer = print $ "Redeemer: " <> A.encode (scriptDataToJson ScriptDataJsonDetailedSchema $ fromPlutusData $ PlutusV2.toData redeemer)
 
 {-# INLINABLE mkPolicy #-}
 mkPolicy :: NFTParams -> BuiltinData -> PlutusV2.ScriptContext -> Bool
