@@ -6,7 +6,7 @@ tokenName=$3
 addrFile=$4
 skeyFile=$5
 
-rootDir=../af/mint
+rootDir=../upp/mint
 echo "oref: $oref"
 echo "amt: $amt"
 echo "tokenName: $tokenName"
@@ -17,7 +17,7 @@ protocolParams=$rootDir/protocol-params.json
 cardano-cli query protocol-parameters --$TS --out-file $protocolParams
 
 #create a serialised file from the script
-serializedPolicyScriptFile=$rootDir/afyaRekod0010.plutus
+serializedPolicyScriptFile=$rootDir/$3.plutus
 cabal exec token-policy $serializedPolicyScriptFile $oref $amt $tokenName
 
 unsignedFile=$rootDir/tx.unsigned
