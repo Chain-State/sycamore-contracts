@@ -27,20 +27,6 @@ import qualified PlutusTx
 import           PlutusTx.Builtins.Internal  (BuiltinByteString (..))
 import qualified Plutus.V2.Ledger.Api                 as PlutusV2
 
-
--- dataToScriptData :: Data -> PlutusV2.ScriptData
--- dataToScriptData (Constr n xs) = ScriptDataConstructor n $ dataToScriptData <$> xs
--- dataToScriptData (Map xs)      = ScriptDataMap [(dataToScriptData x, dataToScriptData y) | (x, y) <- xs]
--- dataToScriptData (List xs)     = ScriptDataList $ dataToScriptData <$> xs
--- dataToScriptData (I n)         = ScriptDataNumber n
--- dataToScriptData (B bs)        = ScriptDataBytes bs
-
--- writeJSON :: PlutusTx.ToData a => FilePath -> a -> IO ()
--- writeJSON file = LBS.writeFile file . encode . scriptDataToJson ScriptDataJsonDetailedSchema . dataToScriptData . PlutusTx.toData
-
--- writeUnit :: IO ()
--- writeUnit = writeJSON "testnet/unit.json" ()
-
 --utility function to get the utxo TxOutRef object from a utxo string
 unsafeReadTxOutRef :: String -> PlutusV2.TxOutRef
 unsafeReadTxOutRef s =
@@ -51,18 +37,6 @@ unsafeReadTxOutRef s =
         { PlutusV2.txOutRefId  = fromString x
         , PlutusV2.txOutRefIdx = read y
         }
-
--- script :: PlutusV2.Script
--- script  = PlutusV2.unMintingPolicyScript 
-
--- scriptSBS :: SBS.ShortByteString
--- scriptSBS = SBS.toShort . LBS.toStrict $ serialise script
-
--- serialisedScript :: PlutusScript PlutusScriptV2
--- serialisedScript = PlutusScriptSerialised scriptSBS
-
--- writeSerialisedScript :: IO ()
--- writeSerialisedScript = void $ writeFileTextEnvelope "testnet/upp/mint/nft-mint-V2.plutus" Nothing serialisedScript
 
 writeMintingPolicy :: FilePath -> PlutusV2.MintingPolicy -> IO (Either (FileError ()) ())
 writeMintingPolicy file = writeFileTextEnvelope @(PlutusScript PlutusScriptV2) file Nothing . PlutusScriptSerialised . SBS.toShort . LBS.toStrict . serialise . PlutusV2.unMintingPolicyScript
