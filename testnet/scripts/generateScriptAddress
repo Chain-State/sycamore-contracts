@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cardano-cli address build --payment-script-file ../upp/lock-script/uppv2_test$1.plutus --out-file ../upp/lock-script/uppv2_test$1.addr --$TS

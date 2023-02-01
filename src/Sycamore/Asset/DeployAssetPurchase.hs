@@ -20,7 +20,7 @@ import qualified Data.Text.Encoding as TE
 
 import           PlutusTx              (Data (..))
 import qualified PlutusTx
-import qualified Plutus.V1.Ledger.Api as L
+import qualified Plutus.V2.Ledger.Api as L
 import qualified Data.String as DS
 import qualified Ledger.Value
 
@@ -37,22 +37,22 @@ writeJSON :: PlutusTx.ToData a => FilePath -> a -> IO ()
 writeJSON file = LBS.writeFile file . encode . scriptDataToJson ScriptDataJsonDetailedSchema . dataToScriptData . PlutusTx.toData
 
 writeValidator :: FilePath -> L.Validator -> IO (Either (FileError ()) ())
-writeValidator file = writeFileTextEnvelope @(PlutusScript PlutusScriptV1) file Nothing . PlutusScriptSerialised . SBS.toShort . LBS.toStrict . serialise . L.unValidatorScript
+writeValidator file = writeFileTextEnvelope @(PlutusScript PlutusScriptV2) file Nothing . PlutusScriptSerialised . SBS.toShort . LBS.toStrict . serialise . L.unValidatorScript
 
 writeUnit :: IO ()
-writeUnit = writeJSON "testnet/af/lock-script/unit.json" ()
+writeUnit = writeJSON "testnet/upp/lock-script/unit.json" ()
 
 writeRedeemer :: IO () 
-writeRedeemer = writeJSON "testnet/af/lock-script/redeemer.json" ()
+writeRedeemer = writeJSON "testnet/upp/lock-script/redeemer.json" ()
 
 writeAssetPurchaseValidator :: IO (Either (FileError ()) ())
-writeAssetPurchaseValidator = writeValidator "testnet/af/lock-script/test08.plutus" $ validator $ AssetPurchase 
+writeAssetPurchaseValidator = writeValidator "testnet/upp/lock-script/uppv2_test01.plutus" $ validator $ AssetPurchase 
                                 {
-                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "Test#08"
-                                   ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString "dd37676faf20920c167c00c474ba697c03da622cb8b9e585b0f7aa72"
+                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "AR-UPP#18"
+                                   ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString "04c5fe2f355eb590378f98193d4b71c93d9149444e979f7a6b37f4d8"
                                    ,minterCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,minterAmount = 2000000
-                                   ,beneficiary = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString  "da23034939ff35e8d65f4280b30c64274ce528df929deb94708727e1"
+                                   ,beneficiary = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString  "be50558acab3ad6b869be265e9c22e421a366aac6e61bf8b1c43ee8a"
                                    ,beneficiaryCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,beneficiaryAmount = 2000000
                                    ,collateral = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "")

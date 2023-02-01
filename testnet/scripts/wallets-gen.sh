@@ -1,8 +1,17 @@
-#! /bin/bash
+#!/bin/bash
 
-cd .. && \
-cd wallets && \
-mkdir $1 && \
-cd $1 &&  \
-cardano-cli address key-gen --verification-key-file $1.vkey --signing-key-file $1.skey && \
-cardano-cli address build --payment-verification-key-file $1.vkey --out-file $1.addr --$TS 
+dir=$1
+rootDir=../wallets
+walletDir=$rootDir/$dir
+
+if [ ! -d "$walletDir" ] 
+then 
+    mkdir $walletDir
+    cd $walletDir
+else 
+    echo "wallet directory exists"
+    exit 1
+fi
+
+cardano-cli address key-gen --verification-key-file $dir.vkey --signing-key-file $dir.skey && \
+cardano-cli address build --payment-verification-key-file $dir.vkey --out-file $dir.addr --$TS 
