@@ -1,8 +1,8 @@
 {-# LANGUAGE DataKinds           #-}
-{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE DeriveAnyClass      #-}
 {-# LANGUAGE DeriveGeneric       #-}
 {-# LANGUAGE FlexibleContexts    #-}
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE NoImplicitPrelude   #-}
 {-# LANGUAGE NumericUnderscores  #-}
 {-# LANGUAGE OverloadedStrings   #-}
@@ -17,14 +17,14 @@ module Sycamore.Nft.OnChain
     , tokenCurSymbol
     ) where
 
+import           Ledger.Typed.Scripts           as Scripts
+import           Ledger.Value                   as Value
+import qualified Plutus.Script.Utils.V2.Scripts as PSU.V2
+import qualified Plutus.V2.Ledger.Api           as PlutusV2
+import           Plutus.V2.Ledger.Contexts      as V2
 import qualified PlutusTx
-import PlutusTx.Builtins
-import PlutusTx.Prelude hiding (Semigroup(..), unless)
-import qualified Plutus.Script.Utils.V2.Scripts       as PSU.V2
-import qualified Plutus.V2.Ledger.Api as PlutusV2
-import Plutus.V2.Ledger.Contexts as V2
-import Ledger.Typed.Scripts as Scripts
-import           Ledger.Value                as Value
+import           PlutusTx.Builtins
+import           PlutusTx.Prelude               hiding (Semigroup (..), unless)
 
 --This policy script defines the constraints under which the tokens can be minted.
 --In this case:
@@ -32,8 +32,8 @@ import           Ledger.Value                as Value
     -- the minting info for previous mint operations matches the current inputs on   token name and amount.
 {-# INLINABLE mkTokenPolicy #-}
 mkTokenPolicy :: PlutusV2.TxOutRef -> PlutusV2.TokenName -> Integer -> () -> PlutusV2.ScriptContext -> Bool
-mkTokenPolicy oref tn amt () ctx = 
-    traceIfFalse "UTxO not consumed"   hasUTxO   
+mkTokenPolicy oref tn amt () ctx =
+    traceIfFalse "UTxO not consumed"   hasUTxO
     &&  traceIfFalse "can only mint 1 token" checkMintedAmount
   where
     info :: PlutusV2.TxInfo

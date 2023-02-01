@@ -1,10 +1,10 @@
 module Main
-    ( main
-    ) where
+    ( main)
+     where
 
-import Data.String        (IsString (..))
-import System.Environment (getArgs)
-import Sycamore.Utils       (unsafeTokenNameToHex)
+import           Data.String        (IsString (..))
+import           Sycamore.Utils     (unsafeTokenNameToHex)
+import           System.Environment (getArgs)
 
 main :: IO ()
 main = do

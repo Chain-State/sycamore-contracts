@@ -13,8 +13,8 @@
 {-# LANGUAGE TypeFamilies          #-}
 {-# LANGUAGE TypeOperators         #-}
 
-module Sycamore.Nft.MintExample 
-  ( 
+module Sycamore.Nft.MintExample
+  (
     serialisedScript,
     scriptSBS,
     script,
@@ -45,7 +45,7 @@ import qualified PlutusTx
 import           PlutusTx.Prelude                     as P hiding
                                                            (Semigroup (..),
                                                             unless, (.))
-                                                            
+
 import           Prelude                              (IO, Semigroup (..),
                                                        Show (..), print, (.))
 
@@ -53,7 +53,7 @@ data NFTParams = NFTParams --  doesn't need more than the TxOutRef
     {
       mpTokenName :: !PlutusV2.TokenName
     ,  mpAmount   :: !Integer
-    , mpTxOutRef :: !PlutusV2.TxOutRef
+    , mpTxOutRef  :: !PlutusV2.TxOutRef
     --, mpPubKeyHs  :: !Plutus.PubKeyHash
     } deriving Show
 
