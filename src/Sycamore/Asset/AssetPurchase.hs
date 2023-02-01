@@ -4,6 +4,7 @@
 {-# LANGUAGE DerivingStrategies         #-}
 {-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE ImportQualifiedPost        #-}
 {-# LANGUAGE LambdaCase                 #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE NoImplicitPrelude          #-}
@@ -14,46 +15,44 @@
 {-# LANGUAGE TypeApplications           #-}
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE TypeOperators              #-}
-{-# LANGUAGE ImportQualifiedPost        #-}
 
-module Sycamore.Asset.AssetPurchase where 
+module Sycamore.Asset.AssetPurchase where
 
 -- import Cardano.Api.Shelley (PlutusScript (..), PlutusScriptV1)
-import Prelude (Semigroup (..), Show (..))
-import Codec.Serialise ( serialise )
-import Data.Aeson (ToJSON, FromJSON)
-import Data.ByteString.Lazy qualified as LBS
-import Data.ByteString.Short qualified as SBS
-import GHC.Generics (Generic)
+import           Data.Aeson                           (FromJSON, ToJSON)
+import           GHC.Generics                         (Generic)
 
-import Plutus.V1.Ledger.Value
-import Plutus.V1.Ledger.Time
-import Plutus.V2.Ledger.Api
-import Plutus.V2.Ledger.Contexts
+import           Ledger.Typed.Scripts                 as Scripts
+import           Ledger.Value                         as Value
+import           Plutus.Script.Utils.V2.Contexts      hiding (valuePaidTo)
+import qualified Plutus.Script.Utils.V2.Typed.Scripts as V2
+import           Plutus.V2.Ledger.Api                 as PlutusV2
+import           Plutus.V2.Ledger.Contexts            as PlutusV2
+import qualified PlutusTx
+import           PlutusTx.Prelude                     hiding (Semigroup (..))
 
-import Plutus.Script.Utils.Typed qualified as Scripts
-import Plutus.Script.Utils.V2.Contexts hiding (valuePaidTo, ScriptContext)
-import Plutus.Script.Utils.V2.Typed.Scripts.Validators qualified as Scripts
-import PlutusTx.Prelude hiding (Semigroup (..))
-import PlutusTx qualified 
-
-import Ledger hiding (singleton, TxOut, ScriptContext, txOutAddress, scriptContextTxInfo, txOutValue, txInInfoResolved, txInfoInputs, txInfoOutputs, scriptContextTxInfo, txInfoValidRange, valuePaidTo)
-
--- import qualified Plutus.V1.Ledger.Scripts as Plutus
--- import Plutus.V1.Ledger.Scripts
--- import qualified Ledger.Typed.Scripts as Scr
+import           Ledger                               hiding (ScriptContext,
+                                                       TxOut,
+                                                       scriptContextTxInfo,
+                                                       singleton,
+                                                       txInInfoResolved,
+                                                       txInfoInputs,
+                                                       txInfoOutputs,
+                                                       txInfoValidRange,
+                                                       txOutAddress, txOutValue,
+                                                       valuePaidTo)
 
 data AssetPurchase = AssetPurchase {
-    saleNftTn :: TokenName
-   ,minter   :: PubKeyHash 
-   ,minterCurrency :: AssetClass
-   ,minterAmount :: Integer
-   ,beneficiary :: PubKeyHash
-   ,beneficiaryAmount :: Integer
+    saleNftTn           :: TokenName
+   ,minter              :: PubKeyHash
+   ,minterCurrency      :: AssetClass
+   ,minterAmount        :: Integer
+   ,beneficiary         :: PubKeyHash
+   ,beneficiaryAmount   :: Integer
    ,beneficiaryCurrency :: AssetClass
-   ,collateral :: AssetClass
-   ,collateralAmnt :: Integer
-   ,saleExpiresOn :: POSIXTime
+   ,collateral          :: AssetClass
+   ,collateralAmnt      :: Integer
+   ,saleExpiresOn       :: POSIXTime
 } deriving (Generic, FromJSON, ToJSON)
 
 
@@ -65,13 +64,13 @@ PlutusTx.makeLift ''AssetPurchase
 {-# INLINABLE purchaseValidator #-}
 
 --this function will be supplied to `mkTypedValidator` which will compile it into Plutus Core.
-purchaseValidator :: AssetPurchase -> () -> () -> ScriptContext -> Bool 
-purchaseValidator p () () ctx  = validate 
+purchaseValidator :: AssetPurchase -> () -> () -> PlutusV2.ScriptContext -> Bool
+purchaseValidator p () () ctx  = validate
     where
         validate ::  Bool
-        validate =    txHasOneScInputOnly 
-                      && validateTxOuts 
-                      && beneficiaryIsPaid 
+        validate =    txHasOneScInputOnly
+                      && validateTxOuts
+                      && beneficiaryIsPaid
                       && minterIsPaid
                       && saleValid
 
@@ -84,8 +83,8 @@ purchaseValidator p () () ctx  = validate
 
         txOutValidate :: TxOut -> Bool
         txOutValidate txo = containsRequiredCollateralAmount txo
-        
-        -- collateral added is at least 2 Ada 
+
+        -- collateral added is at least 2 Ada
         containsRequiredCollateralAmount :: TxOut -> Bool
         containsRequiredCollateralAmount txo =
           collateralAmnt p <= assetClassValueOf (txOutValue txo) (collateral p)
@@ -110,15 +109,15 @@ purchaseValidator p () () ctx  = validate
 
 
 
---for typed validators, we need to inform the Plutus compiler by creating a new type that encodes 
+--for typed validators, we need to inform the Plutus compiler by creating a new type that encodes
 --the information about the datum and redeemer that plutus core expects.
 data Typed
 instance Scripts.ValidatorTypes Typed where
     type instance DatumType Typed = ()
-    type instance RedeemerType Typed = () 
+    type instance RedeemerType Typed = ()
 
-typedValidator :: AssetPurchase -> Scripts.TypedValidator Typed
-typedValidator p = Scripts.mkTypedValidator @Typed
+typedValidator :: AssetPurchase -> V2.TypedValidator Typed
+typedValidator p = V2.mkTypedValidator @Typed
     ($$(PlutusTx.compile [|| purchaseValidator ||]) `PlutusTx.applyCode` PlutusTx.liftCode p) $$(PlutusTx.compile [|| wrap ||])
   where
     wrap = Scripts.mkUntypedValidator
