@@ -58,6 +58,13 @@ executable token-name-hex
   build-depends:       base ^>= 4.14.1.0
                      , sycamore-validators
 
+executable serialise-validator 
+  main-is: SerialValidator.hs
+  hs-source-dirs:      app
+  ghc-options:         -Wall
+  build-depends:       base ^>= 4.14.1.0
+                     , sycamore-validators
+
 
 build-tool-depends:
   , cardano-node:cardano-node   >=1.35
