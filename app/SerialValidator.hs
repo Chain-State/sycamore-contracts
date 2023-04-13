@@ -9,7 +9,6 @@ module Main (main) where
     main = do
         [title] <- getArgs
 
-        putStrLn title
         let file = "testnet/upp/lock-script/" ++ title ++ ".plutus"
         e <- writeAssetPurchaseValidator file title
         case e of 
