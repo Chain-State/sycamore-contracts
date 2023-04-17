@@ -47,7 +47,7 @@ data AssetPurchase = AssetPurchase {
    ,minter              :: PubKeyHash
    ,minterCurrency      :: AssetClass
    ,minterAmount        :: Integer
-   ,beneficiary         :: PubKeyHash
+   ,beneficiary         :: [PubKeyHash]
    ,beneficiaryAmount   :: Integer
    ,beneficiaryCurrency :: AssetClass
    ,collateral          :: AssetClass
@@ -70,7 +70,7 @@ purchaseValidator p () () ctx  = validate
         validate ::  Bool
         validate =    txHasOneScInputOnly
                       && validateTxOuts
-                      && beneficiaryIsPaid
+                      && paysBeneficiaries beneficiary
                       && minterIsPaid
                       && saleValid
 
@@ -89,8 +89,12 @@ purchaseValidator p () () ctx  = validate
         containsRequiredCollateralAmount txo =
           collateralAmnt p <= assetClassValueOf (txOutValue txo) (collateral p)
 
-        beneficiaryIsPaid :: Bool
-        beneficiaryIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (beneficiary p)) (beneficiaryCurrency p) == beneficiaryAmount p
+        beneficiaryIsPaid ::  PubKeyHash -> Bool
+        beneficiaryIsPaid pbkh= assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) pbkh) (beneficiaryCurrency p) == beneficiaryAmount p
+
+        paysBeneficiaries :: [PubKeyHash] -> Bool
+        paysBeneficiaries [] = False
+        paysBeneficiaries (x:xs) = all (==True) [beneficiaryIsPaid x : paysBeneficiaries xs]
 
         minterIsPaid :: Bool
         minterIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (minter p)) (minterCurrency p) == minterAmount p

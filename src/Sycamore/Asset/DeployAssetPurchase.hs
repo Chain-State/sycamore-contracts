@@ -45,11 +45,11 @@ writeUnit = writeJSON "testnet/upp/lock-script/unit.json" ()
 writeRedeemer :: IO () 
 writeRedeemer = writeJSON "testnet/upp/lock-script/redeemer.json" ()
 
-writeAssetPurchaseValidator :: String -> String ->  IO (Either (FileError ()) ())
-writeAssetPurchaseValidator file param1 = writeValidator file $ validator $ AssetPurchase 
+writeAssetPurchaseValidator :: String -> String -> String -> IO (Either (FileError ()) ())
+writeAssetPurchaseValidator file assetName publisherPkhs = writeValidator file $ validator $ AssetPurchase 
                                 {
-                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack param1 
-                                   ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString "04c5fe2f355eb590378f98193d4b71c93d9149444e979f7a6b37f4d8"
+                                    saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack assetName 
+                                   ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString publisherPkhs  
                                    ,minterCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,minterAmount = 2000000
                                    ,beneficiary = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString  "be50558acab3ad6b869be265e9c22e421a366aac6e61bf8b1c43ee8a"
