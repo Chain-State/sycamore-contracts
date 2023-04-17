@@ -70,7 +70,7 @@ purchaseValidator p () () ctx  = validate
         validate ::  Bool
         validate =    txHasOneScInputOnly
                       && validateTxOuts
-                      && paysBeneficiaries beneficiary
+                      && all (==True) (paysBeneficiaries (beneficiary p))
                       && minterIsPaid
                       && saleValid
 
@@ -92,9 +92,9 @@ purchaseValidator p () () ctx  = validate
         beneficiaryIsPaid ::  PubKeyHash -> Bool
         beneficiaryIsPaid pbkh= assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) pbkh) (beneficiaryCurrency p) == beneficiaryAmount p
 
-        paysBeneficiaries :: [PubKeyHash] -> Bool
-        paysBeneficiaries [] = False
-        paysBeneficiaries (x:xs) = all (==True) [beneficiaryIsPaid x : paysBeneficiaries xs]
+        paysBeneficiaries :: [PubKeyHash] -> [Bool]
+        paysBeneficiaries [] = [True]
+        paysBeneficiaries (x:xs) = beneficiaryIsPaid x : paysBeneficiaries xs
 
         minterIsPaid :: Bool
         minterIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (minter p)) (minterCurrency p) == minterAmount p

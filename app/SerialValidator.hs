@@ -8,10 +8,11 @@ module Main (main) where
 --convert pbkhs in args to list
     main :: IO ()
     main = do
-        [assetName, publisherPkhs ] <- getArgs
+        [assetName, ppkh, bpbkh1, bpbkh2, bpbkh3 ] <- getArgs
 
-        let file = "testnet/upp/lock-script/" ++ title ++ ".plutus"
-        e <- writeAssetPurchaseValidator file title publisherPkhs
+        let file = "testnet/upp/lock-script/" ++ assetName ++ ".plutus"
+        let beneficiaries = [bpbkh1, bpbkh2, bpbkh3]
+        e <- writeAssetPurchaseValidator file assetName ppkh beneficiaries
         case e of 
             Left err -> throwIO $ userError $ show err
             Right () -> return () 

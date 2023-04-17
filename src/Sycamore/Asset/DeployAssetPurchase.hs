@@ -45,14 +45,18 @@ writeUnit = writeJSON "testnet/upp/lock-script/unit.json" ()
 writeRedeemer :: IO () 
 writeRedeemer = writeJSON "testnet/upp/lock-script/redeemer.json" ()
 
-writeAssetPurchaseValidator :: String -> String -> String -> IO (Either (FileError ()) ())
-writeAssetPurchaseValidator file assetName publisherPkhs = writeValidator file $ validator $ AssetPurchase 
+makeList :: [String] -> [L.PubKeyHash]
+makeList [] = []
+makeList (x:xs) =  (L.PubKeyHash $ L.getLedgerBytes $ DS.fromString x) : makeList xs 
+
+writeAssetPurchaseValidator :: String -> String -> String -> [String] -> IO (Either (FileError ()) ())
+writeAssetPurchaseValidator file assetName publisherPkhs beneficiaryPbkhs = writeValidator file $ validator $ AssetPurchase 
                                 {
                                     saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack assetName 
                                    ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString publisherPkhs  
                                    ,minterCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,minterAmount = 2000000
-                                   ,beneficiary = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString  "be50558acab3ad6b869be265e9c22e421a366aac6e61bf8b1c43ee8a"
+                                   ,beneficiary = makeList beneficiaryPbkhs 
                                    ,beneficiaryCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,beneficiaryAmount = 2000000
                                    ,collateral = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack "")
