@@ -12,12 +12,9 @@ repository cardano-haskell-packages
     d4a35cd3121aa00d18544bb0ac01c3e1691d618f462c46129271bccf39f7e8ee
 
 -- See CONTRIBUTING.adoc for how to update index-state
-index-state: 2022-12-22T00:00:00Z
-
--- See CONTRIBUTING.adoc for how to update index-state
 index-state:
-  , hackage.haskell.org 2022-12-22T00:00:00Z
-  , cardano-haskell-packages 2022-12-22T00:00:00Z
+  , hackage.haskell.org 2023-04-19T11:52:34Z
+  , cardano-haskell-packages 2023-04-24T15:30:00Z
 
 packages: sycamore-validators.cabal 
 
