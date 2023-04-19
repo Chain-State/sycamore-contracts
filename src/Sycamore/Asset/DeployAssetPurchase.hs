@@ -46,14 +46,13 @@ writeRedeemer :: IO ()
 writeRedeemer = writeJSON "testnet/upp/lock-script/redeemer.json" ()
 
 makeList :: [String] -> [L.PubKeyHash]
-makeList [] = []
-makeList (x:xs) =  (L.PubKeyHash $ L.getLedgerBytes $ DS.fromString x) : makeList xs 
+makeList xs =  map L.PubKeyHash $ L.getLedgerBytes $ DS.fromString xs 
 
 writeAssetPurchaseValidator :: String -> String -> String -> [String] -> IO (Either (FileError ()) ())
-writeAssetPurchaseValidator file assetName publisherPkhs beneficiaryPbkhs = writeValidator file $ validator $ AssetPurchase 
+writeAssetPurchaseValidator file assetName publisherPkh beneficiaryPbkhs = writeValidator file $ validator $ AssetPurchase 
                                 {
                                     saleNftTn = Ledger.Value.tokenName $ TE.encodeUtf8 $ T.pack assetName 
-                                   ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString publisherPkhs  
+                                   ,minter = L.PubKeyHash $ L.getLedgerBytes $ DS.fromString publisherPkh  
                                    ,minterCurrency = Ledger.Value.assetClass (Ledger.Value.currencySymbol "") (Ledger.Value.tokenName  $ TE.encodeUtf8 $ T.pack "")
                                    ,minterAmount = 2000000
                                    ,beneficiary = makeList beneficiaryPbkhs 

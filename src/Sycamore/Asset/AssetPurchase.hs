@@ -93,8 +93,7 @@ purchaseValidator p () () ctx  = validate
         beneficiaryIsPaid pbkh= assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) pbkh) (beneficiaryCurrency p) == beneficiaryAmount p
 
         paysBeneficiaries :: [PubKeyHash] -> [Bool]
-        paysBeneficiaries [] = [True]
-        paysBeneficiaries (x:xs) = beneficiaryIsPaid x : paysBeneficiaries xs
+        paysBeneficiaries = map beneficiaryIsPaid 
 
         minterIsPaid :: Bool
         minterIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (minter p)) (minterCurrency p) == minterAmount p
