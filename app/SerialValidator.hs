@@ -1,11 +1,8 @@
 module Main (main) where
-    import           Data.String        (IsString (..))
-    import           Sycamore.Utils     (unsafeTokenNameToHex)
     import Sycamore.Asset.DeployAssetPurchase (writeAssetPurchaseValidator)
-    import           System.Environment (getArgs)
+    import System.Environment (getArgs)
     import Control.Exception (throwIO)
 
---convert pbkhs in args to list
     main :: IO ()
     main = do
         [assetName, publisherKey, beneficiariesKeys ] <- getArgs
