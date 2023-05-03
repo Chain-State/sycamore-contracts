@@ -31,7 +31,7 @@ library
                      , plutus-contract
                      , plutus-ledger    
                      , plutus-ledger-api    >=1.0.0
-                     , plutus-ledger-constraints
+                     , plutus-tx-constraints
                      , plutus-pab
                      , plutus-tx-plugin     >=1.0.0
                      , plutus-tx    >=1.0.0
