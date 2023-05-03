@@ -23,9 +23,9 @@ import           Data.Aeson                           (FromJSON, ToJSON)
 import           GHC.Generics                         (Generic)
 
 import           Ledger.Typed.Scripts                 as Scripts
-import           Ledger.Value                         as Value
 import           Plutus.Script.Utils.V2.Contexts      hiding (valuePaidTo)
 import qualified Plutus.Script.Utils.V2.Typed.Scripts as V2
+import           Plutus.Script.Utils.Value            as Value
 import           Plutus.V2.Ledger.Api                 as PlutusV2
 import           Plutus.V2.Ledger.Contexts            as PlutusV2
 import qualified PlutusTx
@@ -47,7 +47,7 @@ data AssetPurchase = AssetPurchase {
    ,minter              :: PubKeyHash
    ,minterCurrency      :: AssetClass
    ,minterAmount        :: Integer
-   ,beneficiary         :: PubKeyHash
+   ,beneficiary         :: [PubKeyHash]
    ,beneficiaryAmount   :: Integer
    ,beneficiaryCurrency :: AssetClass
    ,collateral          :: AssetClass
@@ -57,7 +57,6 @@ data AssetPurchase = AssetPurchase {
 
 
 PlutusTx.makeLift ''AssetPurchase
--- PlutusTx.makeIsDataIndexed ''AssetPurchaseDatum [('AssetPurchaseDatum, 0)]
 
 --pragma {# INLINABLE func #}: allows the compiler to inline the definition of `purchaseValidator` inside the `||` brackets
 --Any function that is to be used for on-chain code will need this validator.
@@ -70,7 +69,7 @@ purchaseValidator p () () ctx  = validate
         validate ::  Bool
         validate =    txHasOneScInputOnly
                       && validateTxOuts
-                      && beneficiaryIsPaid
+                      -- && paysBeneficiaries
                       && minterIsPaid
                       && saleValid
 
@@ -89,8 +88,11 @@ purchaseValidator p () () ctx  = validate
         containsRequiredCollateralAmount txo =
           collateralAmnt p <= assetClassValueOf (txOutValue txo) (collateral p)
 
-        beneficiaryIsPaid :: Bool
-        beneficiaryIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (beneficiary p)) (beneficiaryCurrency p) == beneficiaryAmount p
+        beneficiaryIsPaid ::  PubKeyHash -> Bool
+        beneficiaryIsPaid pbkh= assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) pbkh) (beneficiaryCurrency p) == beneficiaryAmount p
+
+        paysBeneficiaries :: Bool
+        paysBeneficiaries = all (==True) $ map beneficiaryIsPaid (beneficiary p)
 
         minterIsPaid :: Bool
         minterIsPaid = assetClassValueOf (valuePaidTo (scriptContextTxInfo ctx) (minter p)) (minterCurrency p) == minterAmount p

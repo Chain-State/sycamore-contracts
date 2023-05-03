@@ -31,7 +31,7 @@ library
                      , plutus-contract
                      , plutus-ledger    
                      , plutus-ledger-api    >=1.0.0
-                     , plutus-ledger-constraints
+                     , plutus-tx-constraints
                      , plutus-pab
                      , plutus-tx-plugin     >=1.0.0
                      , plutus-tx    >=1.0.0
@@ -53,6 +53,13 @@ executable token-policy
 
 executable token-name-hex 
   main-is: TokenNameHex.hs
+  hs-source-dirs:      app
+  ghc-options:         -Wall
+  build-depends:       base ^>= 4.14.1.0
+                     , sycamore-validators
+
+executable serialise-validator 
+  main-is: SerialValidator.hs
   hs-source-dirs:      app
   ghc-options:         -Wall
   build-depends:       base ^>= 4.14.1.0

@@ -1,18 +1,17 @@
 cardano-cli transaction build-raw \
     --babbage-era \
-    --tx-in 18e4b24f0ffef55527af458e49541f95b02fe6e1c1283df1c0029b474f6115f1#0  \
-    --tx-in 18e4b24f0ffef55527af458e49541f95b02fe6e1c1283df1c0029b474f6115f1#3  \
-    --tx-in 35b7c6b7ca0cef72895f7cc514106e3a3fd4ebb7de17d05e2deb88badac2c71b#1  \
-    --tx-out-datum-hash-file "../af/lock-script/unit.json" \
-    --tx-out $(cat ../wallets/scripts/test08.addr)+7000000+" 1 a1e1afeb55ce2fc39b66e3ff87594333393a634ed2d15660d9fdfd81.54455354233032" \
-    --tx-out $(cat ../wallets/buyer/buyer.addr)+2209954 \
-    --out-file "../af/lock-script/txs/tx.raw" \
+    --tx-in 285ad96cb21bb169fde23c97ba75de040bb2832f3d560e704a3c7edeb0f4bf4e#0  \
+    --tx-in 161be5322f5b0e2ddb5045a99629e23d902b12408bcee6f494f646841f930207#0  \
+    --tx-out $(cat ../upp/lock-script/uppv2_test02.addr)+20000000+" 1 d6090a22c2b52c2c5754a9d4a433b13522efda95a72b56287521f8a8.4152233139" \
+    --tx-out $(cat ../wallets/buyer/buyer.addr)+81322135 \
+    --tx-out-datum-hash-file "../upp/lock-script/unit.json" \
+    --out-file "../upp/lock-script/txs/tx.raw" \
     --fee 177865
 
 cardano-cli transaction sign \
 --signing-key-file "../wallets/buyer/buyer.skey" \
---tx-body-file  "../af/lock-script/txs/tx.raw" \
---out-file "../af/lock-script/txs/tx.signed"  \
+--tx-body-file  "../upp/lock-script/txs/tx.raw" \
+--out-file "../upp/lock-script/txs/tx.signed"  \
 --$TS 
 
-cardano-cli transaction submit --tx-file "../af/lock-script/txs/tx.signed" --$TS 
+cardano-cli transaction submit --tx-file "../upp/lock-script/txs/tx.signed" --$TS 
