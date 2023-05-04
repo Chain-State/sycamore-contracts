@@ -21,7 +21,6 @@ import           Ledger.Typed.Scripts           as Scripts
 import qualified Plutus.Script.Utils.V2.Scripts as PSU.V2
 import           Plutus.Script.Utils.Value      as Value
 import qualified Plutus.V2.Ledger.Api           as PlutusV2
-import           Plutus.V2.Ledger.Contexts      as V2
 import qualified PlutusTx
 import           PlutusTx.Builtins
 import           PlutusTx.Prelude               hiding (Semigroup (..), unless)
