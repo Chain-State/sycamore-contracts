@@ -2,11 +2,11 @@
 
 cardano-cli transaction build \
      --babbage-era \
-    --tx-in 8cf50142a6be9eb1ef5c4ba3a8cc3276fd922baeba00316012f5fc9ec4053a46#0 \
+    --tx-in 4b9d7ca47e5b222832515373034be4b58d4af4f0634d8dc04f7be458bc9f9a14#0 \
     --tx-in-datum-file "../upp/unlock-script/unit.json" \
     --tx-in-redeemer-file "../upp/unlock-script/unit.json" \
-    --tx-in-script-file "../upp/lock-script/AR#3444.plutus" \
-    --tx-out $(cat ../wallets/buyer/buyer.addr)+"2000000 lovelace + 1 9990c8ac2bb155d18789b1230c0208692b0f86e7537defd24e0cf38d.41522333343434" \
+    --tx-in-script-file "../upp/lock-script/SYS-66#0004.plutus" \
+    --tx-out $(cat ../wallets/buyer/buyer.addr)+"3000000 lovelace + 1 a0ae6907a9ac0e5a2ee059fbd206130396f5f6ec61c7f319c14ee936.5359532d36362330303034" \
     --tx-out $(cat ../wallets/minter/minter.addr)+2000000 \
     --tx-out $(cat ../wallets/beneficiary/beneficiary.addr)+2000000 \
     --tx-in-collateral 48e4403bc4fb285a4232be59c79136555731ee231402ae38a379c8e1501bc6c7#1 \
