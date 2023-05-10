@@ -20,21 +20,16 @@ module Sycamore.Asset.AssetPurchase where
 
 import           Data.Aeson                      (FromJSON, ToJSON)
 import           GHC.Generics                    (Generic)
-import           Plutus.Script.Utils.V2.Contexts hiding (valuePaidTo)
+
 import           Plutus.Script.Utils.Value       as Value
-import           Plutus.V2.Ledger.Api            as PlutusV2
-import           Plutus.V2.Ledger.Contexts       as PlutusV2
+import           Plutus.V2.Ledger.Api            
+import           Plutus.V2.Ledger.Contexts            
+import          Ledger(toValidatorHash, member)
+
 import qualified PlutusTx
 import           PlutusTx.Prelude                hiding (Semigroup (..))
-import           Sycamore.Utils                  (wrapValidator)
 
-import           Ledger                          hiding (ScriptContext, TxOut,
-                                                  scriptContextTxInfo,
-                                                  singleton, txInInfoResolved,
-                                                  txInfoInputs, txInfoOutputs,
-                                                  txInfoValidRange,
-                                                  txOutAddress, txOutValue,
-                                                  valuePaidTo)
+import           Sycamore.Utils                  (wrapValidator)
 
 data AssetPurchase = AssetPurchase {
     saleNftTn           :: TokenName
@@ -47,7 +42,7 @@ data AssetPurchase = AssetPurchase {
    ,collateral          :: AssetClass
    ,collateralAmnt      :: Integer
    ,saleExpiresOn       :: POSIXTime
-} deriving (Generic, FromJSON, ToJSON)
+} 
 
 
 PlutusTx.makeLift ''AssetPurchase
@@ -55,7 +50,7 @@ PlutusTx.makeLift ''AssetPurchase
 {-# INLINABLE purchaseValidator #-}
 
 --this function will be supplied to `mkTypedValidator` which will compile it into Plutus Core.
-purchaseValidator :: AssetPurchase -> () -> () -> PlutusV2.ScriptContext -> Bool
+purchaseValidator :: AssetPurchase -> () -> () -> ScriptContext -> Bool
 purchaseValidator p () () ctx  = validate
     where
         validate ::  Bool
