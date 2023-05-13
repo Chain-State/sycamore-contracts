@@ -26,9 +26,6 @@ import qualified Data.ByteString.Short as BSS
 import Plutus.V2.Ledger.Api (TokenName(..), Validator(..), CurrencySymbol(..), PubKeyHash(..),getLedgerBytes)
 import           Plutus.Script.Utils.Value (assetClass)
 
-import           PlutusTx              (CompiledCode)
-
-
 import           Sycamore.Asset.AssetPurchase
 
 
