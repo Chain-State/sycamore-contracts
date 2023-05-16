@@ -1,12 +1,12 @@
 #!/bin/bash
 
 cardano-cli transaction build \
-     --babbage-era \
-    --tx-in 4b9d7ca47e5b222832515373034be4b58d4af4f0634d8dc04f7be458bc9f9a14#0 \
-    --tx-in-datum-file "../upp/unlock-script/unit.json" \
+    --babbage-era \
+    --tx-in "95a47bd5f1b18e89cd2c45edbe16c46fa8dacdb9e660ce1e35efffb3256120a2#0" \
+    --tx-in-inline-datum-present \
     --tx-in-redeemer-file "../upp/unlock-script/unit.json" \
-    --tx-in-script-file "../upp/lock-script/SYS-66#0004.plutus" \
-    --tx-out $(cat ../wallets/buyer/buyer.addr)+"3000000 lovelace + 1 a0ae6907a9ac0e5a2ee059fbd206130396f5f6ec61c7f319c14ee936.5359532d36362330303034" \
+    --tx-in-script-file "../upp/lock-script/8820.plutus" \
+    --tx-out $(cat ../wallets/buyer/buyer.addr)+"3000000 lovelace + 1 e530fab7c51a58961879def3365371e0b16b29510fdbddcbb0caa291.38383230" \
     --tx-out $(cat ../wallets/minter/minter.addr)+2000000 \
     --tx-out $(cat ../wallets/beneficiary/beneficiary.addr)+2000000 \
     --tx-in-collateral 48e4403bc4fb285a4232be59c79136555731ee231402ae38a379c8e1501bc6c7#1 \

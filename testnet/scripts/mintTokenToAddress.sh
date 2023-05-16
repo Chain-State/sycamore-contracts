@@ -39,7 +39,7 @@ cardano-cli transaction build \
     --tx-in $oref \
     --tx-in-collateral $oref \
     --tx-out "$address 40000000 lovelace + $value" \
-    --tx-out-datum-hash-file "../upp/lock-script/unit.json" \
+    --tx-out-inline-datum-file "../upp/lock-script/unit.json" \
     --mint "$value" \
     --mint-script-file $serializedPolicyScriptFile \
     --mint-redeemer-file $rootDir/unit.json \
