@@ -26,17 +26,18 @@ import           Plutus.Script.Utils.Value (AssetClass (..), assetClassValueOf)
 import           Plutus.V2.Ledger.Api      (BuiltinData, POSIXTime, PubKeyHash,
                                             ScriptContext (scriptContextTxInfo),
                                             TokenName, Value,
-                                            TxInfo (txInfoValidRange), TxOut,
+                                             TxOut,
                                             Validator, ValidatorHash (..),
                                             adaSymbol, adaToken, from,
                                             mkValidatorScript, singleton,
                                             txInInfoResolved, txInfoInputs,
                                             txInfoOutputs, txOutAddress,
                                             txOutValue)
-import           Plutus.V2.Ledger.Contexts (valuePaidTo)
+import           Plutus.V2.Ledger.Contexts (valuePaidTo, TxInfo, TxInfo(txInfoValidRange))
 
-import qualified PlutusTx
-import           PlutusTx.Prelude          hiding (Semigroup (..))
+import qualified PlutusTx (compile, unstableMakeIsData, makeLift, applyCode, liftCode)
+import PlutusTx.Builtins (BuiltinData, Integer)
+import           PlutusTx.Prelude          (Bool (..), (==), (.), ($),(<$>), (&&), traceIfFalse, isJust, length, filter)
 
 import           Sycamore.Utils            (wrapValidator)
 
@@ -57,6 +58,10 @@ PlutusTx.makeLift ''AssetPurchase
 purchaseValidator :: AssetPurchase -> () -> () -> ScriptContext -> Bool
 purchaseValidator p () () ctx  = validate
     where
+        
+        txInfo :: TxInfo
+        txInfo = scriptContextTxInfo ctx
+
         validate ::  Bool
         validate =    txHasOneScInputOnly
                       && saleValid
@@ -67,7 +72,7 @@ purchaseValidator p () () ctx  = validate
           length (filter isJust $ toValidatorHash . txOutAddress . txInInfoResolved <$> txInfoInputs (scriptContextTxInfo ctx)) == 1
 
         paysMinter :: Bool
-        paysMinter = traceIfFalse "Minter Not Paid" $ singleton adaSymbol adaToken 2000000 == minterValue p 
+        paysMinter = traceIfFalse "Minter Not Paid" $ valuePaidTo txInfo (minterPkh p) == minterValue p 
 
         saleValid :: Bool
         saleValid = traceIfFalse "Time Interval Failed" $ member (saleExpiresOn p) $ txInfoValidRange (scriptContextTxInfo ctx)
