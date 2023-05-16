@@ -23,8 +23,7 @@ import           Codec.Serialise       (Serialise, serialise)
 import qualified Data.ByteString.Char8 as BS8
 import qualified Data.ByteString.Lazy  as BSL
 import qualified Data.ByteString.Short as BSS
-import Plutus.V2.Ledger.Api (TokenName(..), Validator(..), CurrencySymbol(..), PubKeyHash(..),getLedgerBytes)
-import           Plutus.Script.Utils.Value (assetClass)
+import Plutus.V2.Ledger.Api (TokenName(..), Validator(..), CurrencySymbol(..), PubKeyHash(..),singleton, getLedgerBytes, adaSymbol, adaToken, fromBytes)
 
 import           Sycamore.Asset.AssetPurchase
 
@@ -56,20 +55,13 @@ writeScriptToFile filePath script =
 writeValidatorToFile :: FilePath -> Validator -> IO ()
 writeValidatorToFile filePath = writeScriptToFile filePath . validatorToScript
 
-makeList :: [String] -> [PubKeyHash]
-makeList =  map (PubKeyHash . getLedgerBytes . DS.fromString)
 
-writeAssetPurchaseValidator :: String -> String -> String -> [String] -> IO ()
-writeAssetPurchaseValidator filePath assetName publisherPkh beneficiaryPbkhs = writeValidatorToFile filePath $ validator $ AssetPurchase
+writeAssetPurchaseValidator :: String -> String -> IO ()
+writeAssetPurchaseValidator filePath assetName = writeValidatorToFile filePath $ validator $ AssetPurchase
                                 {
-                                    saleNftTn = TokenName $  getLedgerBytes $ DS.fromString assetName
-                                   ,minter = PubKeyHash $ getLedgerBytes $ DS.fromString publisherPkh
-                                   ,minterCurrency = assetClass (CurrencySymbol "") (TokenName  $  getLedgerBytes $ DS.fromString "")
-                                   ,minterAmount = 2000000
-                                   ,beneficiary = makeList beneficiaryPbkhs
-                                   ,beneficiaryCurrency = assetClass (CurrencySymbol "") (TokenName  $  getLedgerBytes $ DS.fromString "")
-                                   ,beneficiaryAmount = 2000000
-                                   ,collateral = assetClass (CurrencySymbol "") (TokenName  $  getLedgerBytes $ DS.fromString "")
-                                   ,collateralAmnt = 2000000
+                                    saleNftTn = TokenName $  DS.fromString assetName
+                                   ,minterPkh = PubKeyHash $ getLedgerBytes $ DS.fromString "04c5fe2f355eb590378f98193d4b71c93d9149444e979f7a6b37f4d8" 
+                                   ,minterValue = singleton adaSymbol adaToken 2000000
+                                   ,collateralValue = singleton adaSymbol adaToken 2000000                              
                                    ,saleExpiresOn =1735689600 
                                 }

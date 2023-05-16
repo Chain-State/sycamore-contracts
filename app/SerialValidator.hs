@@ -5,12 +5,9 @@ module Main (main) where
 
     main :: IO ()
     main = do
-        [assetName, publisherKey, beneficiariesKeys ] <- getArgs
+        [assetName ] <- getArgs
 
         let file = "testnet/upp/lock-script/" ++ assetName ++ ".plutus"
         --convert space separated string to array of keys
-        let beneficiaryKeysList = words beneficiariesKeys
-        e <- writeAssetPurchaseValidator file assetName publisherKey beneficiaryKeysList
-        case e of 
-            Left err -> throwIO $ userError $ show err
-            Right () -> return () 
+        -- let beneficiaryKeysList = words beneficiariesKeys
+        writeAssetPurchaseValidator file assetName
