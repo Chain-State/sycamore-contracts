@@ -1,11 +1,11 @@
   {
     "721": {
-      "81f6df414e9dd1df52598573fd56493989273084398afc3e9e3aebb2": {
-        "41522d54455354233031": {
-          "name": "AR-TEST#03",
+      "08c0a853168425faa2ff318125d9fea5855bb965456a40dcfc89b45b": {
+        "5359532d36362330303031": {
+          "name": "SYS-66#0001",
           "image": "ipfs://QmTGxReZszfzCMenQcFNqCoWpTUyLEKT878cT73AKTmJxK",
           "mediaType": "image/png",
-          "description": "AfyaRekod-UPP Test Token #03",
+          "description": "AfyaRekod-UPP Test Token SYC-66#0001",
           "files": [
             {
               "mediaType": "image/png",
